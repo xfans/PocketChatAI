@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pocket_chat/src/blocs/chat_cubit.dart';
 import 'package:pocket_chat/src/models/message.dart';
+import 'package:pocket_chat/src/ui/widgets/message_bubble.dart';
+import 'package:pocket_chat/src/ui/widgets/chat_input_field.dart';
+import 'package:pocket_chat/src/ui/widgets/welcome_screen.dart';
+import 'package:pocket_chat/src/ui/widgets/quick_actions.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -81,28 +85,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildWelcomeScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.chat_bubble_outline,
-            size: 80,
-            color: Colors.grey[300],
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Welcome to AI ChatBox!',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Start a conversation by typing a message below.',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+    return WelcomeScreen(
+      onNewChat: () {
+        // Clear any existing messages to start a new chat
+        context.read<ChatCubit>().clearMessages();
+      },
     );
   }
 
@@ -122,37 +109,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageBubble(Message message) {
-    final isUser = message.isUserMessage;
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isUser ? Colors.blue : Colors.grey[300],
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          crossAxisAlignment:
-              isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Text(
-              message.content,
-              style: TextStyle(
-                color: isUser ? Colors.white : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              _formatTime(message.timestamp),
-              style: TextStyle(
-                color: isUser ? Colors.white70 : Colors.grey[600],
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return MessageBubble(
+      message: message.content,
+      sender: message.isUserMessage ? 'You' : 'AI Assistant',
+      isMe: message.isUserMessage,
+      timestamp: message.timestamp,
     );
   }
 
@@ -161,37 +122,15 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildInputArea() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _showAttachmentOptions,
-          ),
-          Expanded(
-            child: TextField(
-              controller: _textController,
-              decoration: const InputDecoration(
-                hintText: 'Type a message...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              onSubmitted: (_) => _sendMessage(),
-              maxLines: null,
-              minLines: 1,
-              keyboardType: TextInputType.multiline,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: _sendMessage,
-          ),
-        ],
-      ),
+    return ChatInputField(
+      controller: _textController,
+      onSend: (message) {
+        _sendMessage();
+      },
+      onAttachmentPressed: _showAttachmentOptions,
+      onVoicePressed: () {
+        // TODO: Implement voice input
+      },
     );
   }
 
@@ -248,7 +187,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 250,
+          height: 200,
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,32 +197,47 @@ class _ChatScreenState extends State<ChatScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              _buildQuickActionItem(Icons.lightbulb, 'Explain this concept'),
-              _buildQuickActionItem(Icons.translate, 'Translate to Spanish'),
-              _buildQuickActionItem(Icons.summarize, 'Summarize this text'),
-              _buildQuickActionItem(Icons.question_mark, 'Ask about this'),
+              Expanded(
+                child: QuickActions(
+                  actions: [
+                    QuickActionItem(
+                      icon: Icons.lightbulb,
+                      title: 'Explain',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // TODO: Implement explain functionality
+                      },
+                    ),
+                    QuickActionItem(
+                      icon: Icons.translate,
+                      title: 'Translate',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // TODO: Implement translate functionality
+                      },
+                    ),
+                    QuickActionItem(
+                      icon: Icons.summarize,
+                      title: 'Summarize',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // TODO: Implement summarize functionality
+                      },
+                    ),
+                    QuickActionItem(
+                      icon: Icons.question_mark,
+                      title: 'Question',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // TODO: Implement question functionality
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         );
-      },
-    );
-  }
-
-  Widget _buildQuickActionItem(IconData icon, String label) {
-    return ListTile(
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Icon(icon, color: Colors.blue),
-      ),
-      title: Text(label),
-      onTap: () {
-        Navigator.pop(context);
-        // TODO: Implement quick action functionality
       },
     );
   }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pocket_chat/src/blocs/chat_cubit.dart';
 import 'package:pocket_chat/src/ui/screens/chat_screen.dart';
+import 'package:pocket_chat/src/ui/widgets/custom_app_bar.dart';
+import 'package:pocket_chat/src/ui/widgets/drawer_item.dart';
+import 'package:pocket_chat/src/ui/widgets/chat_history_item.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,14 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: const Text('AI ChatBox'),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-        ),
+      appBar: CustomAppBar(
+        title: 'AI ChatBox',
+        onMenuPressed: () {
+          _scaffoldKey.currentState?.openDrawer();
+        },
         actions: [
           IconButton(
             icon: const Icon(Icons.clear),
@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _buildDrawerItem(
+                  DrawerItem(
                     icon: Icons.add,
                     title: 'New Chat',
                     onTap: () {
@@ -109,20 +109,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   ..._chatHistory.asMap().entries.map((entry) {
-                    int index = entry.key;
                     Map<String, String> chat = entry.value;
-                    return _buildChatHistoryItem(
-                      index: index,
+                    return ChatHistoryItem(
                       title: chat['title']!,
                       subtitle: chat['subtitle']!,
                       onTap: () {
                         // TODO: Implement chat history loading
                         Navigator.pop(context);
                       },
+                      onLongPress: () {
+                        // TODO: Implement chat history context menu
+                      },
                     );
                   }).toList(),
                   const Divider(),
-                  _buildDrawerItem(
+                  DrawerItem(
                     icon: Icons.settings,
                     title: 'Settings',
                     onTap: () {
@@ -130,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.pop(context);
                     },
                   ),
-                  _buildDrawerItem(
+                  DrawerItem(
                     icon: Icons.info,
                     title: 'About',
                     onTap: () {
@@ -160,59 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: const ChatScreen(),
-    );
-  }
-
-  Widget _buildDrawerItem({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: subtitle != null
-          ? Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis)
-          : null,
-      onTap: onTap,
-    );
-  }
-
-  Widget _buildChatHistoryItem({
-    required int index,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Icon(Icons.chat_bubble_outline, color: Colors.blue),
-      ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
-      trailing: PopupMenuButton<String>(
-        onSelected: (String result) {
-          // TODO: Implement chat history actions
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-          const PopupMenuItem<String>(
-            value: 'rename',
-            child: Text('Rename'),
-          ),
-          const PopupMenuItem<String>(
-            value: 'delete',
-            child: Text('Delete'),
-          ),
-        ],
-      ),
-      onTap: onTap,
     );
   }
 }
