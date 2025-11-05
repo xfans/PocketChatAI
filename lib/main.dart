@@ -4,7 +4,7 @@ import 'package:pocket_chat/src/blocs/chat_cubit.dart';
 import 'package:pocket_chat/src/database/objectbox_service.dart';
 import 'package:pocket_chat/src/repositories/chat_repository.dart';
 import 'package:pocket_chat/src/services/ai_service.dart';
-import 'package:pocket_chat/src/ui/screens/chat_screen.dart';
+import 'package:pocket_chat/src/ui/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: const ChatScreen(),
+          home: const HomeScreen(),
         ),
       ),
     );
