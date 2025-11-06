@@ -24,7 +24,7 @@ class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Model Providers',
+        title: 'Model Provider',
         onMenuPressed: () {
           context.pop();
         },
@@ -47,9 +47,9 @@ class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
             itemBuilder: (context, index) {
               final provider = providers[index];
               return ListTile(
-                leading: const Icon(Icons.cloud),
+                leading: _buildProviderIcon(provider.id),
                 title: Text(provider.name),
-                subtitle: Text(provider.type),
+                // subtitle: Text(provider.type),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   context.pushNamed('modelSettings', pathParameters: {
@@ -62,5 +62,40 @@ class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
         },
       ),
     );
+  }
+
+  Widget _buildProviderIcon(String providerId) {
+    // Map provider IDs to their corresponding image assets
+    final imageMap = {
+      'openai': 'images/providers/openai.png',
+      'claude': 'images/providers/claude.png',
+      'gemini': 'images/providers/gemini.png',
+      'ollama': 'images/providers/ollama.png',
+      'lmstudio': 'images/providers/lm-studio.png',
+      'deepseek': 'images/providers/deepseek.png',
+      'siliconflow': 'images/providers/siliconflow.png',
+      'openrouter': 'images/providers/openrouter.png',
+      'volcengine': 'images/providers/volcengine.png',
+      'azure': 'images/providers/azure.png',
+      'xai': 'images/providers/xAI.png',
+      'mistralai': 'images/providers/mistral-ai.png',
+      'perplexity': 'images/providers/perplexity.png',
+      'groq': 'images/providers/groq.png',
+      'chatglm6b': 'images/providers/chatglm-6b.png',
+    };
+
+    final imagePath = imageMap[providerId];
+
+    if (imagePath != null) {
+      return Image.asset(
+        imagePath,
+        width: 24,
+        height: 24,
+        fit: BoxFit.contain,
+      );
+    }
+
+    // Fallback to the cloud icon if no image is found
+    return const Icon(Icons.cloud);
   }
 }
