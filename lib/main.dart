@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pocket_chat/src/blocs/chat_cubit.dart';
 import 'package:pocket_chat/src/database/objectbox_service.dart';
 import 'package:pocket_chat/src/repositories/chat_repository.dart';
 import 'package:pocket_chat/src/services/ai_service.dart';
-import 'package:pocket_chat/src/ui/screens/home_screen.dart';
+import 'package:pocket_chat/src/routing/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,17 +45,20 @@ class MyApp extends StatelessWidget {
       );
     }
 
+    // Create the router
+    final router = AppRouter.createRouter();
+
     return RepositoryProvider.value(
       value: repository!,
       child: BlocProvider(
         create: (context) => ChatCubit(repository!),
-        child: MaterialApp(
+        child: MaterialApp.router(
           title: 'PocketChat AI',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: const HomeScreen(),
+          routerConfig: router,
         ),
       ),
     );

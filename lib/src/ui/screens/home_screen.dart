@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pocket_chat/src/blocs/chat_cubit.dart';
 import 'package:pocket_chat/src/ui/screens/chat_screen.dart';
 import 'package:pocket_chat/src/ui/widgets/custom_app_bar.dart';
@@ -93,7 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: 'New Chat',
                     onTap: () {
                       context.read<ChatCubit>().clearMessages();
-                      Navigator.pop(context);
                     },
                   ),
                   const Divider(),
@@ -113,13 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     return ChatHistoryItem(
                       title: chat['title']!,
                       subtitle: chat['subtitle']!,
-                      onTap: () {
-                        // TODO: Implement chat history loading
-                        Navigator.pop(context);
-                      },
-                      onLongPress: () {
-                        // TODO: Implement chat history context menu
-                      },
+                      onTap: () {},
+                      onLongPress: () {},
                     );
                   }).toList(),
                   const Divider(),
@@ -127,16 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icons.settings,
                     title: 'Settings',
                     onTap: () {
-                      // TODO: Implement settings navigation
-                      Navigator.pop(context);
+                      context.push('/settings');
                     },
                   ),
                   DrawerItem(
                     icon: Icons.info,
                     title: 'About',
                     onTap: () {
-                      // TODO: Implement about navigation
-                      Navigator.pop(context);
+                      context.push('/about');
                     },
                   ),
                 ],
@@ -145,9 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton.icon(
-                onPressed: () {
-                  // TODO: Implement logout functionality
-                },
+                onPressed: () {},
                 icon: const Icon(Icons.logout),
                 label: const Text('Logout'),
                 style: ElevatedButton.styleFrom(
