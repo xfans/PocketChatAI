@@ -10,9 +10,9 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Settings',
-        onMenuPressed: () {
+        onBackPressed: () {
           context.pop();
-        },
+        }
       ),
       body: ListView(
         children: [

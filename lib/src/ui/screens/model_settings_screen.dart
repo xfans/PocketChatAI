@@ -44,7 +44,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
       return Scaffold(
         appBar: CustomAppBar(
           title: 'Provider Not Found',
-          onMenuPressed: () {
+          onBackPressed: () {
             context.pop();
           },
         ),
@@ -57,7 +57,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: '${_provider!.name} Settings',
-        onMenuPressed: () {
+        onBackPressed: () {
           context.pop();
         },
       ),

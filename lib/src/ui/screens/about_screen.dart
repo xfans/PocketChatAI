@@ -10,7 +10,7 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'About',
-        onMenuPressed: () {
+        onBackPressed: () {
           context.pop();
         },
       ),

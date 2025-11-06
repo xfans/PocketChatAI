@@ -25,7 +25,7 @@ class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Model Provider',
-        onMenuPressed: () {
+        onBackPressed: () {
           context.pop();
         },
       ),
