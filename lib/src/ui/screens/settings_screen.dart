@@ -14,8 +14,17 @@ class SettingsScreen extends StatelessWidget {
           context.pop();
         },
       ),
-      body: const Center(
-        child: Text('Settings Screen'),
+      body: ListView(
+        children: [
+          ListTile(
+            title: const Text('Model Providers'),
+            subtitle: const Text('Configure AI model providers and settings'),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              context.pushNamed('modelProviders');
+            },
+          ),
+        ],
       ),
     );
   }
