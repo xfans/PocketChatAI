@@ -19,7 +19,6 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
   late ModelProvider? _provider;
   late TextEditingController _apiKeyController;
   late TextEditingController _apiHostController;
-  String? _selectedModel;
   bool _isApiKeyValid = false;
   bool _isCheckingApiKey = false;
   String? _apiKeyCheckError;
@@ -30,9 +29,6 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     _provider = ProviderService().getProviderById(widget.providerId);
     _apiKeyController = TextEditingController();
     _apiHostController = TextEditingController(text: _provider?.apiHost ?? '');
-    if (_provider?.models.isNotEmpty ?? false) {
-      _selectedModel = _provider!.models.first.modelId;
-    }
   }
 
   @override
@@ -296,12 +292,6 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                                   'Capabilities: ${model.capabilities.join(', ')}'),
                           ],
                         ),
-                        selected: _selectedModel == model.modelId,
-                        onTap: () {
-                          setState(() {
-                            _selectedModel = model.modelId;
-                          });
-                        },
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
