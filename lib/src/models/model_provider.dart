@@ -42,6 +42,27 @@ class ModelProvider {
       models: models,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['type'] = type;
+    data['website'] = website;
+
+    final Map<String, dynamic> defaultSettings = <String, dynamic>{};
+    defaultSettings['apiHost'] = apiHost;
+    defaultSettings['apiPath'] = apiPath;
+    defaultSettings['endpoint'] = endpoint;
+    defaultSettings['apiVersion'] = apiVersion;
+
+    final List<Map<String, dynamic>> modelsList =
+        models.map((model) => model.toJson()).toList();
+    defaultSettings['models'] = modelsList;
+
+    data['defaultSettings'] = defaultSettings;
+    return data;
+  }
 }
 
 class ModelInfo {
@@ -76,5 +97,18 @@ class ModelInfo {
       contextWindow: json['contextWindow'] as int?,
       maxOutput: json['maxOutput'] as int?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['modelId'] = modelId;
+    data['type'] = type;
+    data['nickname'] = nickname;
+
+    data['capabilities'] = capabilities;
+    data['contextWindow'] = contextWindow;
+    data['maxOutput'] = maxOutput;
+
+    return data;
   }
 }

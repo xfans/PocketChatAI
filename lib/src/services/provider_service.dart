@@ -5,30 +5,6 @@ class ProviderService {
   factory ProviderService() => _instance;
   ProviderService._internal();
 
-  List<ModelProvider> _providers = [];
-  bool _isLoaded = false;
-
-  List<ModelProvider> get providers => _providers;
-
-  Future<void> loadProviders() async {
-    if (_isLoaded) return;
-
-    try {
-      _providers = getDefaultProviders();
-      _isLoaded = true;
-    } catch (e) {
-      print('Error loading providers: $e');
-    }
-  }
-
-  ModelProvider? getProviderById(String id) {
-    try {
-      return _providers.firstWhere((provider) => provider.id == id);
-    } catch (e) {
-      return null;
-    }
-  }
-
   static List<ModelProvider> getDefaultProviders() {
     return [
       // ModelProvider(

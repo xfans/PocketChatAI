@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pocket_chat/src/ui/widgets/custom_app_bar.dart';
 import 'package:pocket_chat/src/ui/widgets/custom_text_field.dart';
 import 'package:pocket_chat/src/ui/widgets/custom_button.dart';
 import 'package:pocket_chat/src/services/provider_service.dart';
 import 'package:pocket_chat/src/models/model_provider.dart';
+import 'package:pocket_chat/src/blocs/provider_setting_cubit.dart';
 
 class ModelSettingsScreen extends StatefulWidget {
   final String providerId;
@@ -26,9 +28,15 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _provider = ProviderService().getProviderById(widget.providerId);
     _apiKeyController = TextEditingController();
-    _apiHostController = TextEditingController(text: _provider?.apiHost ?? '');
+    _apiHostController = TextEditingController();
+
+    // Load saved settings
+    _loadSavedSettings();
+  }
+
+  Future<void> _loadSavedSettings() async {
+    final cubit = context.read<ProviderSettingCubit>();
   }
 
   @override
@@ -36,6 +44,25 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     _apiKeyController.dispose();
     _apiHostController.dispose();
     super.dispose();
+  }
+
+  void _saveSettings() {
+    if (_provider != null) {
+      final cubit = context.read<ProviderSettingCubit>();
+      // Create an updated provider with the new settings
+      final updatedProvider = ModelProvider(
+        id: _provider!.id,
+        name: _provider!.name,
+        type: _provider!.type,
+        website: _provider!.website,
+        apiHost: _apiHostController.text,
+        apiPath: _provider!.apiPath,
+        endpoint: _provider!.endpoint,
+        apiVersion: _provider!.apiVersion,
+        models: _provider!.models,
+      );
+      cubit.saveProviderSettings(widget.providerId, updatedProvider);
+    }
   }
 
   void _validateApiKey() async {
@@ -57,6 +84,11 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
         _apiKeyCheckError = 'Invalid API key';
       }
     });
+
+    // Save settings if API key is valid
+    if (isValid) {
+      _saveSettings();
+    }
   }
 
   void _addNewModel() {
@@ -104,14 +136,6 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
           ],
         );
       },
-    );
-  }
-
-  void _fetchModels() async {
-    // In a real implementation, this would fetch models from the API
-    // For now, we'll show a snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fetch models functionality would go here')),
     );
   }
 
@@ -240,6 +264,10 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
             CustomTextField(
               controller: _apiHostController,
               hintText: 'Enter API host URL',
+              onChanged: (value) {
+                // Save settings when API host changes
+                _saveSettings();
+              },
             ),
             const SizedBox(height: 24),
 
@@ -257,14 +285,9 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.refresh),
-                      onPressed: _fetchModels,
-                      tooltip: 'Fetch Models',
-                    ),
-                    IconButton(
                       icon: const Icon(Icons.restore),
-                      onPressed: _resetModels,
-                      tooltip: 'Reset Models',
+                      onPressed: _addNewModel,
+                      tooltip: 'Add Model',
                     ),
                   ],
                 ),

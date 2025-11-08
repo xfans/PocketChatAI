@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pocket_chat/src/ui/widgets/custom_app_bar.dart';
 import 'package:pocket_chat/src/services/provider_service.dart';
 import 'package:pocket_chat/src/models/model_provider.dart';
+
+import '../../blocs/provider_setting_cubit.dart';
 
 class ModelProvidersScreen extends StatefulWidget {
   const ModelProvidersScreen({super.key});
@@ -12,12 +15,10 @@ class ModelProvidersScreen extends StatefulWidget {
 }
 
 class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
-  late Future<void> _providersFuture;
-
   @override
   void initState() {
     super.initState();
-    _providersFuture = ProviderService().loadProviders();
+    context.read<ProviderSettingCubit>().loadProviderList();
   }
 
   @override
@@ -29,38 +30,27 @@ class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
           context.pop();
         },
       ),
-      body: FutureBuilder<void>(
-        future: _providersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          final providers = ProviderService().providers;
-
-          return ListView.builder(
-            itemCount: providers.length,
-            itemBuilder: (context, index) {
-              final provider = providers[index];
-              return ListTile(
-                leading: _buildProviderIcon(provider.id),
-                title: Text(provider.name),
-                // subtitle: Text(provider.type),
-                trailing: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  context.pushNamed('modelSettings', pathParameters: {
-                    'providerId': provider.id,
-                  });
-                },
-              );
-            },
-          );
-        },
-      ),
+      body: BlocBuilder<ProviderSettingCubit, ProviderSettingLoaded>(
+          builder: (context, state) {
+        return ListView.builder(
+          itemCount: state.providers?.length ?? 0,
+          itemBuilder: (context, index) {
+            final provider = state.providers?[index];
+            if (provider == null) return Container();
+            return ListTile(
+              leading: _buildProviderIcon(provider.id),
+              title: Text(provider.name),
+              // subtitle: Text(provider.type),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                context.pushNamed('modelSettings', pathParameters: {
+                  'providerId': provider.id,
+                });
+              },
+            );
+          },
+        );
+      }),
     );
   }
 
