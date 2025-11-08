@@ -18,12 +18,9 @@ class ModelSettingsScreen extends StatefulWidget {
 }
 
 class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
-  late ModelProvider? _provider;
   late TextEditingController _apiKeyController;
   late TextEditingController _apiHostController;
-  bool _isApiKeyValid = false;
-  bool _isCheckingApiKey = false;
-  String? _apiKeyCheckError;
+
 
   @override
   void initState() {
@@ -31,12 +28,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     _apiKeyController = TextEditingController();
     _apiHostController = TextEditingController();
 
-    // Load saved settings
-    _loadSavedSettings();
-  }
-
-  Future<void> _loadSavedSettings() async {
-    final cubit = context.read<ProviderSettingCubit>();
+    context.read<ProviderSettingCubit>().loadProvider(widget.providerId);
   }
 
   @override
@@ -46,7 +38,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     super.dispose();
   }
 
-  void _saveSettings() {
+  void _saveSettings(ModelProvider _provider) {
     if (_provider != null) {
       final cubit = context.read<ProviderSettingCubit>();
       // Create an updated provider with the new settings
@@ -65,11 +57,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     }
   }
 
-  void _validateApiKey() async {
-    setState(() {
-      _isCheckingApiKey = true;
-      _apiKeyCheckError = null;
-    });
+  void _validateApiKey(ModelProvider _provider) async {
 
     // Simulate API key validation
     await Future.delayed(const Duration(seconds: 1));
@@ -77,17 +65,9 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     // In a real implementation, you would call your API service to validate the key
     bool isValid = _apiKeyController.text.isNotEmpty;
 
-    setState(() {
-      _isCheckingApiKey = false;
-      _isApiKeyValid = isValid;
-      if (!isValid) {
-        _apiKeyCheckError = 'Invalid API key';
-      }
-    });
-
     // Save settings if API key is valid
     if (isValid) {
-      _saveSettings();
+      _saveSettings(_provider);
     }
   }
 
@@ -170,174 +150,176 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_provider == null) {
-      return Scaffold(
-        appBar: CustomAppBar(
-          title: 'Provider Not Found',
-          onBackPressed: () {
-            context.pop();
-          },
-        ),
-        body: const Center(
-          child: Text('Provider not found'),
-        ),
-      );
-    }
-
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: '${_provider!.name} Settings',
-        onBackPressed: () {
-          context.pop();
-        },
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _addNewModel,
-            tooltip: 'Add Model',
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // API Key Section
-            const Text(
-              'API Key',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            CustomTextField(
-              controller: _apiKeyController,
-              hintText: 'Enter your API key',
-              obscureText: true,
-              suffixIcon: _isCheckingApiKey
-                  ? const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : _isApiKeyValid
-                      ? const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Icon(Icons.check, color: Colors.green),
-                        )
-                      : null,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                CustomButton(
-                  text: 'Check',
-                  onPressed:
-                      _apiKeyController.text.isEmpty ? null : _validateApiKey,
-                ),
-                const SizedBox(width: 12),
-                if (_apiKeyCheckError != null)
-                  Expanded(
-                    child: Text(
-                      _apiKeyCheckError!,
-                      style: const TextStyle(color: Colors.red, fontSize: 12),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // API Host Section
-            const Text(
-              'API Host',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            CustomTextField(
-              controller: _apiHostController,
-              hintText: 'Enter API host URL',
-              onChanged: (value) {
-                // Save settings when API host changes
-                _saveSettings();
+    return BlocBuilder<ProviderSettingCubit, ProviderSettingLoaded>(
+      builder: (context, state) {
+        if (state.provider == null) {
+          return Scaffold(
+            appBar: CustomAppBar(
+              title: 'Provider Not Found',
+              onBackPressed: () {
+                context.pop();
               },
             ),
-            const SizedBox(height: 24),
-
-            // Models Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            body: const Center(
+              child: Text('Provider not found'),
+            ),
+          );
+        }
+        _apiHostController.text = state.provider!.apiHost!;
+        return Scaffold(
+          appBar: CustomAppBar(
+            title: '${state.provider!.name} Settings',
+            onBackPressed: () {
+              context.pop();
+            },
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: _addNewModel,
+                tooltip: 'Add Model',
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // API Key Section
                 const Text(
-                  'Models',
+                  'API Key',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 8),
+                CustomTextField(
+                  controller: _apiKeyController,
+                  hintText: 'Enter your API key',
+                  obscureText: true,
+                  suffixIcon: state.isCheckingApiKey
+                      ? const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : state.isApiKeyValid
+                          ? const Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Icon(Icons.check, color: Colors.green),
+                            )
+                          : null,
+                ),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.restore),
-                      onPressed: _addNewModel,
-                      tooltip: 'Add Model',
+                    CustomButton(
+                      text: 'Check',
+                      onPressed: _apiKeyController.text.isEmpty
+                          ? null
+                          : (){
+                        _validateApiKey(state.provider!);
+                      },
+                    ),
+                    const SizedBox(width: 12),
+
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // API Host Section
+                const Text(
+                  'API Host',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                CustomTextField(
+                  controller: _apiHostController,
+                  hintText: 'Enter API host URL',
+                  onChanged: (value) {
+                    // Save settings when API host changes
+                    _saveSettings(state.provider!);
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                // Models Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Models',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.restore),
+                          onPressed: _addNewModel,
+                          tooltip: 'Add Model',
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                if (state.provider!.models.isNotEmpty) ...[
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.provider!.models.length,
+                      itemBuilder: (context, index) {
+                        final model = state.provider!.models[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            title: Text(model.nickname ?? model.modelId),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('ID: ${model.modelId}'),
+                                if (model.contextWindow != null)
+                                  Text(
+                                      'Context: ${model.contextWindow} tokens'),
+                                if (model.capabilities.isNotEmpty)
+                                  Text(
+                                      'Capabilities: ${model.capabilities.join(', ')}'),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, size: 18),
+                                  onPressed: () => _editModel(model),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, size: 18),
+                                  onPressed: () => _deleteModel(model),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ] else
+                  const Text('No models available for this provider'),
               ],
             ),
-            const SizedBox(height: 8),
-            if (_provider!.models.isNotEmpty) ...[
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _provider!.models.length,
-                  itemBuilder: (context, index) {
-                    final model = _provider!.models[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        title: Text(model.nickname ?? model.modelId),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('ID: ${model.modelId}'),
-                            if (model.contextWindow != null)
-                              Text('Context: ${model.contextWindow} tokens'),
-                            if (model.capabilities.isNotEmpty)
-                              Text(
-                                  'Capabilities: ${model.capabilities.join(', ')}'),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, size: 18),
-                              onPressed: () => _editModel(model),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, size: 18),
-                              onPressed: () => _deleteModel(model),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ] else
-              const Text('No models available for this provider'),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

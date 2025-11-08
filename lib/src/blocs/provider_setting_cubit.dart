@@ -10,6 +10,7 @@ part 'provider_setting_state.dart';
 class ProviderSettingCubit extends Cubit<ProviderSettingLoaded> {
   // In-memory cache of all providers
   List<ModelProvider> _settingProviders = [];
+
   //default providers map
   Map<String, ModelProvider> _defaultProviders = {};
   bool _isLoaded = false;
@@ -28,6 +29,14 @@ class ProviderSettingCubit extends Cubit<ProviderSettingLoaded> {
     } catch (e) {
       _isLoaded = false;
     }
+  }
+
+  Future<void> checkingApiKey() async {
+    emit(ProviderSettingLoaded(isCheckingApiKey: true));
+    Future.delayed(Duration(seconds: 2), () {
+      print('2秒后执行');
+      emit(ProviderSettingLoaded(isApiKeyValid: true));
+    });
   }
 
   Future<void> loadProviderList() async {
@@ -71,7 +80,12 @@ class ProviderSettingCubit extends Cubit<ProviderSettingLoaded> {
         emit(ProviderSettingLoaded(provider: existingProvider));
         return;
       } else {
-        emit(ProviderSettingLoaded());
+        final provider = _defaultProviders[providerId];
+        if (provider != null) {
+          emit(ProviderSettingLoaded(provider: provider));
+        } else {
+          emit(ProviderSettingLoaded());
+        }
       }
     } catch (e) {
       emit(ProviderSettingLoaded());
