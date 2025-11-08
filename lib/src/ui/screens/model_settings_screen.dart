@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pocket_chat/src/ui/widgets/custom_app_bar.dart';
 import 'package:pocket_chat/src/ui/widgets/custom_text_field.dart';
+import 'package:pocket_chat/src/ui/widgets/custom_button.dart';
 import 'package:pocket_chat/src/services/provider_service.dart';
 import 'package:pocket_chat/src/models/model_provider.dart';
 
@@ -19,6 +20,9 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
   late TextEditingController _apiKeyController;
   late TextEditingController _apiHostController;
   String? _selectedModel;
+  bool _isApiKeyValid = false;
+  bool _isCheckingApiKey = false;
+  String? _apiKeyCheckError;
 
   @override
   void initState() {
@@ -36,6 +40,112 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     _apiKeyController.dispose();
     _apiHostController.dispose();
     super.dispose();
+  }
+
+  void _validateApiKey() async {
+    setState(() {
+      _isCheckingApiKey = true;
+      _apiKeyCheckError = null;
+    });
+
+    // Simulate API key validation
+    await Future.delayed(const Duration(seconds: 1));
+
+    // In a real implementation, you would call your API service to validate the key
+    bool isValid = _apiKeyController.text.isNotEmpty;
+
+    setState(() {
+      _isCheckingApiKey = false;
+      _isApiKeyValid = isValid;
+      if (!isValid) {
+        _apiKeyCheckError = 'Invalid API key';
+      }
+    });
+  }
+
+  void _addNewModel() {
+    // In a real implementation, this would open a model editor dialog
+    // For now, we'll show a snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('Add new model functionality would go here')),
+    );
+  }
+
+  void _editModel(ModelInfo model) {
+    // In a real implementation, this would open a model editor dialog
+    // For now, we'll show a snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Edit model: ${model.nickname ?? model.modelId}')),
+    );
+  }
+
+  void _deleteModel(ModelInfo model) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Model'),
+          content: Text(
+              'Are you sure you want to delete ${model.nickname ?? model.modelId}?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // In a real implementation, this would remove the model from the provider
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          'Deleted model: ${model.nickname ?? model.modelId}')),
+                );
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _fetchModels() async {
+    // In a real implementation, this would fetch models from the API
+    // For now, we'll show a snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Fetch models functionality would go here')),
+    );
+  }
+
+  void _resetModels() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Reset Models'),
+          content: const Text(
+              'Are you sure you want to reset all models to default?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // In a real implementation, this would reset models to default
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Models reset to default')),
+                );
+              },
+              child: const Text('Reset', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -60,38 +170,119 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
         onBackPressed: () {
           context.pop();
         },
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _addNewModel,
+            tooltip: 'Add Model',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // API Key Section
+            const Text(
+              'API Key',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
             CustomTextField(
               controller: _apiKeyController,
               hintText: 'Enter your API key',
               obscureText: true,
+              suffixIcon: _isCheckingApiKey
+                  ? const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : _isApiKeyValid
+                      ? const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Icon(Icons.check, color: Colors.green),
+                        )
+                      : null,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                CustomButton(
+                  text: 'Check',
+                  onPressed:
+                      _apiKeyController.text.isEmpty ? null : _validateApiKey,
+                ),
+                const SizedBox(width: 12),
+                if (_apiKeyCheckError != null)
+                  Expanded(
+                    child: Text(
+                      _apiKeyCheckError!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 16),
+
+            // API Host Section
+            const Text(
+              'API Host',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
             CustomTextField(
               controller: _apiHostController,
               hintText: 'Enter API host URL',
             ),
             const SizedBox(height: 24),
-            if (_provider!.models.isNotEmpty) ...[
-              const Text(
-                'Select Model',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+
+            // Models Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Models',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: _fetchModels,
+                      tooltip: 'Fetch Models',
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.restore),
+                      onPressed: _resetModels,
+                      tooltip: 'Reset Models',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (_provider!.models.isNotEmpty) ...[
               Expanded(
                 child: ListView.builder(
                   itemCount: _provider!.models.length,
                   itemBuilder: (context, index) {
                     final model = _provider!.models[index];
                     return Card(
+                      margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         title: Text(model.nickname ?? model.modelId),
                         subtitle: Column(
@@ -111,6 +302,19 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                             _selectedModel = model.modelId;
                           });
                         },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, size: 18),
+                              onPressed: () => _editModel(model),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, size: 18),
+                              onPressed: () => _deleteModel(model),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
