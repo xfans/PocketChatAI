@@ -21,7 +21,6 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
   late TextEditingController _apiKeyController;
   late TextEditingController _apiHostController;
 
-
   @override
   void initState() {
     super.initState();
@@ -47,6 +46,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
         name: _provider!.name,
         type: _provider!.type,
         website: _provider!.website,
+        apiKey: _apiKeyController.text, // Add apiKey from the controller
         apiHost: _apiHostController.text,
         apiPath: _provider!.apiPath,
         endpoint: _provider!.endpoint,
@@ -58,7 +58,6 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
   }
 
   void _validateApiKey(ModelProvider _provider) async {
-
     // Simulate API key validation
     await Future.delayed(const Duration(seconds: 1));
 
@@ -172,9 +171,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
             onBackPressed: () {
               context.pop();
             },
-            actions: [
-
-            ],
+            actions: [],
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -217,12 +214,13 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                       text: 'Check',
                       onPressed: _apiKeyController.text.isEmpty
                           ? null
-                          : (){
-                        _validateApiKey(state.provider!);
-                      },
+                          : () {
+                              // Remove the line that tries to directly assign to apiKey
+                              // state.provider?.apiKey = key; // This line is removed
+                              _validateApiKey(state.provider!);
+                            },
                     ),
                     const SizedBox(width: 12),
-
                   ],
                 ),
                 const SizedBox(height: 16),

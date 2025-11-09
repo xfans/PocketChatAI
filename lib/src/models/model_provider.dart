@@ -3,6 +3,7 @@ class ModelProvider {
   final String name;
   final String type;
   final String? website;
+  final String? apiKey;
   final String? apiHost;
   final String? apiPath;
   final String? endpoint;
@@ -14,6 +15,7 @@ class ModelProvider {
     required this.name,
     required this.type,
     this.website,
+    this.apiKey,
     this.apiHost,
     this.apiPath,
     this.endpoint,
