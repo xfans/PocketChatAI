@@ -173,11 +173,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
               context.pop();
             },
             actions: [
-              IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: _addNewModel,
-                tooltip: 'Add Model',
-              ),
+
             ],
           ),
           body: Padding(
@@ -264,7 +260,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.restore),
+                          icon: const Icon(Icons.add),
                           onPressed: _addNewModel,
                           tooltip: 'Add Model',
                         ),
