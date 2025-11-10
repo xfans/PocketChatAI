@@ -8,6 +8,8 @@ import 'package:pocket_chat/src/services/provider_service.dart';
 import 'package:pocket_chat/src/models/model_provider.dart';
 import 'package:pocket_chat/src/blocs/provider_setting_cubit.dart';
 
+import '../../blocs/provider_setting_state.dart';
+
 class ModelSettingsScreen extends StatefulWidget {
   final String providerId;
 
@@ -36,29 +38,29 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     _apiHostController.dispose();
     super.dispose();
   }
-
-  void _saveSettings(ModelProvider _provider) {
-    if (_provider != null) {
-      final cubit = context.read<ProviderSettingCubit>();
-      // Create an updated provider with the new settings
-      final updatedProvider = ModelProvider(
-        id: _provider!.id,
-        name: _provider!.name,
-        type: _provider!.type,
-        website: _provider!.website,
-        apiKey: _apiKeyController.text, // Add apiKey from the controller
-        apiHost: _apiHostController.text,
-        apiPath: _provider!.apiPath,
-        endpoint: _provider!.endpoint,
-        apiVersion: _provider!.apiVersion,
-        models: _provider!.models,
-      );
-      cubit.saveProviderSettings(widget.providerId, updatedProvider);
+  void _saveApiHost() {
+    var apiHost = _apiHostController.text;
+    if (apiHost.isEmpty) {
+      return;
     }
+    final cubit = context.read<ProviderSettingCubit>();
+
+    cubit.saveProviderSettings(widget.providerId, apiHost: apiHost);
+  }
+  void _saveApiKey() {
+
+    var apiKey = _apiKeyController.text;
+    if (apiKey.isEmpty) {
+      return;
+    }
+    final cubit = context.read<ProviderSettingCubit>();
+
+    cubit.checkingApiKey(widget.providerId, apiKey);
   }
 
-  void _validateApiKey(ModelProvider _provider) async {
+  void _validateApiKey() async {
     // Simulate API key validation
+    var apiKey = _apiKeyController.text;
     await Future.delayed(const Duration(seconds: 1));
 
     // In a real implementation, you would call your API service to validate the key
@@ -66,7 +68,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
 
     // Save settings if API key is valid
     if (isValid) {
-      _saveSettings(_provider);
+      _saveApiKey();
     }
   }
 
@@ -149,7 +151,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProviderSettingCubit, ProviderSettingLoaded>(
+    return BlocBuilder<ProviderSettingCubit, ProviderSettingState>(
       builder: (context, state) {
         if (state.provider == null) {
           return Scaffold(
@@ -165,6 +167,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
           );
         }
         _apiHostController.text = state.provider!.apiHost!;
+        _apiKeyController.text = state.provider!.apiKey!;
         return Scaffold(
           appBar: CustomAppBar(
             title: '${state.provider!.name} Settings',
@@ -191,7 +194,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                   controller: _apiKeyController,
                   hintText: 'Enter your API key',
                   obscureText: true,
-                  suffixIcon: state.isCheckingApiKey
+                  suffixIcon: state.isCheckingApiKey ==  true
                       ? const Padding(
                           padding: EdgeInsets.all(12.0),
                           child: SizedBox(
@@ -200,7 +203,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                         )
-                      : state.isApiKeyValid
+                      : state.isApiKeyValid == true
                           ? const Padding(
                               padding: EdgeInsets.all(12.0),
                               child: Icon(Icons.check, color: Colors.green),
@@ -212,12 +215,10 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                   children: [
                     CustomButton(
                       text: 'Check',
-                      onPressed: _apiKeyController.text.isEmpty
-                          ? null
-                          : () {
+                      onPressed: () {
                               // Remove the line that tries to directly assign to apiKey
                               // state.provider?.apiKey = key; // This line is removed
-                              _validateApiKey(state.provider!);
+                              _validateApiKey();
                             },
                     ),
                     const SizedBox(width: 12),
@@ -239,7 +240,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
                   hintText: 'Enter API host URL',
                   onChanged: (value) {
                     // Save settings when API host changes
-                    _saveSettings(state.provider!);
+                    _saveApiHost();
                   },
                 ),
                 const SizedBox(height: 24),

@@ -6,6 +6,7 @@ import 'package:pocket_chat/src/services/provider_service.dart';
 import 'package:pocket_chat/src/models/model_provider.dart';
 
 import '../../blocs/provider_setting_cubit.dart';
+import '../../blocs/provider_setting_state.dart';
 
 class ModelProvidersScreen extends StatefulWidget {
   const ModelProvidersScreen({super.key});
@@ -30,7 +31,7 @@ class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
           context.pop();
         },
       ),
-      body: BlocBuilder<ProviderSettingCubit, ProviderSettingLoaded>(
+      body: BlocBuilder<ProviderSettingCubit, ProviderSettingState>(
           builder: (context, state) {
         return ListView.builder(
           itemCount: state.providers?.length ?? 0,

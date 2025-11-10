@@ -1,14 +1,16 @@
-part of 'provider_setting_cubit.dart';
 
-class ProviderSettingLoaded {
-  final ModelProvider? provider;
-  final List<ModelProvider>? providers;
-  final bool isApiKeyValid ;
-  final bool isCheckingApiKey;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  ProviderSettingLoaded(
-      {this.isApiKeyValid = false,
-      this.isCheckingApiKey = false,
-      this.provider,
-      this.providers});
+import '../models/model_provider.dart';
+part 'provider_setting_state.freezed.dart';
+
+
+@freezed
+abstract class ProviderSettingState with _$ProviderSettingLoaded {
+  const factory ProviderSettingState({
+    ModelProvider? provider,
+    List<ModelProvider>? providers,
+     bool? isApiKeyValid,
+     bool? isCheckingApiKey,
+  }) = _ProviderSettingLoaded;
 }
