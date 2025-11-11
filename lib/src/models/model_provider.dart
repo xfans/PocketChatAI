@@ -20,6 +20,15 @@ abstract class ModelProvider with _$ModelProvider {
 
   factory ModelProvider.fromJson(Map<String, dynamic> json) =>
       _$ModelProviderFromJson(json);
+
+  static empty() {
+    return const ModelProvider(
+      id: '',
+      name: '',
+      type: '',
+      models: [],
+    );
+  }
 }
 
 @freezed

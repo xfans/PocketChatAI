@@ -29,7 +29,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     _apiKeyController = TextEditingController();
     _apiHostController = TextEditingController();
 
-    context.read<ProviderSettingCubit>().loadProvider(widget.providerId);
+    context.read<ProviderSettingCubit>().loadSingle(widget.providerId);
   }
 
   @override
@@ -45,7 +45,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     }
     final cubit = context.read<ProviderSettingCubit>();
 
-    cubit.saveProviderSettings(widget.providerId, apiHost: apiHost);
+    cubit.save(widget.providerId, apiHost: apiHost);
   }
   void _saveApiKey() {
 
@@ -55,7 +55,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
     }
     final cubit = context.read<ProviderSettingCubit>();
 
-    cubit.checkingApiKey(widget.providerId, apiKey);
+    cubit.checkApiKey(widget.providerId, apiKey);
   }
 
   void _validateApiKey() async {

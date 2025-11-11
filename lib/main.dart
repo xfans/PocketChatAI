@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
             create: (context) => ChatCubit(repository!),
           ),
           BlocProvider(
-            create: (context) => ProviderSettingCubit()..initialize(),
+            create: (context) => ProviderSettingCubit(),
           ),
         ],
         child: MaterialApp.router(

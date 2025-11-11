@@ -19,7 +19,7 @@ class _ModelProvidersScreenState extends State<ModelProvidersScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ProviderSettingCubit>().loadProviderList();
+    context.read<ProviderSettingCubit>().loadList();
   }
 
   @override
