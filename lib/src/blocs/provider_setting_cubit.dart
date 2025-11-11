@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:openai_dart/openai_dart.dart';
 import 'package:pocket_chat/src/blocs/provider_setting_state.dart';
+import 'package:pocket_chat/src/services/open_ai_compatible.dart';
 
 import '../repositories/provider_repository.dart';
 
@@ -36,8 +38,20 @@ class ProviderSettingCubit extends Cubit<ProviderSettingState> {
   /* ---------- 伪校验 ---------- */
   Future<void> checkApiKey(String id, String key) async {
     emit(state.copyWith(isCheckingApiKey: true));
-    await Future.delayed(const Duration(seconds: 1));
-    await save(id, apiKey: key);
-    emit(state.copyWith(isCheckingApiKey: false, isApiKeyValid: true));
+    try {
+      if(state.provider != null){
+        var provider = state.provider!.copyWith(apiKey: key);
+        var res = await OpenAiCompatible(provider).completion('test');
+        print('res:$res');
+      }
+
+      await save(id, apiKey: key);
+      emit(state.copyWith(isCheckingApiKey: false, isApiKeyValid: true));
+    } catch (e) {
+      print('catch:$e');
+      emit(state.copyWith(isCheckingApiKey: false, isApiKeyValid: false));
+      return;
+    }
+
   }
 }
