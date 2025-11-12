@@ -110,9 +110,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageBubble(Message message) {
     return MessageBubble(
-      message: message.content,
-      sender: message.isUserMessage ? 'You' : 'AI Assistant',
-      isMe: message.isUserMessage,
+      message: message.contentParts,
+      sender: message.role == MessageRoleEnum.user ? 'You' : 'AI Assistant',
+      isMe:message.role == MessageRoleEnum.user,
       timestamp: message.timestamp,
     );
   }
