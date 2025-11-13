@@ -23,7 +23,7 @@ class ChatCubit extends Cubit<ChatState> {
 
     try {
       emit(ChatLoading());
-      await _repository.sendMessage(message);
+      // await _repository.sendMessage(message);
     } catch (e) {
       emit(ChatError('Failed to send message: $e'));
     }

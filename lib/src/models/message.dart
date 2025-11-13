@@ -7,7 +7,7 @@ class Message {
   @Id()
   int id = 0;
 
-  MessageRoleEnum role;
+  String role;
   int sessionId;
 
   String aiProviderId;

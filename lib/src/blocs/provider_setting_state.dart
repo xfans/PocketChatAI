@@ -6,11 +6,11 @@ part 'provider_setting_state.freezed.dart';
 
 
 @freezed
-abstract class ProviderSettingState with _$ProviderSettingLoaded {
+abstract class ProviderSettingState with _$ProviderSettingState {
   const factory ProviderSettingState({
     ModelProvider? provider,
     List<ModelProvider>? providers,
      bool? isApiKeyValid,
      bool? isCheckingApiKey,
-  }) = _ProviderSettingLoaded;
+  }) = _ProviderSettingState;
 }

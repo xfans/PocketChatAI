@@ -4,7 +4,7 @@ import 'package:objectbox/objectbox.dart';
 @Entity()
 class Session {
   @Id(assignable: true)
-  String id = '';
+  int id;
 
   String name;
   String? picUrl;
@@ -14,7 +14,7 @@ class Session {
   int? maxTokens;
 
   Session({
-    this.id = '',
+    this.id = 0,
     this.name = '',
     this.picUrl,
     this.model,

@@ -12,14 +12,14 @@ part of 'provider_setting_state.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$ProviderSettingLoaded {
+mixin _$ProviderSettingState {
 
  ModelProvider? get provider; List<ModelProvider>? get providers; bool? get isApiKeyValid; bool? get isCheckingApiKey;
-/// Create a copy of ProviderSettingLoaded
+/// Create a copy of ProviderSettingState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$ProviderSettingLoadedCopyWith<ProviderSettingState> get copyWith => _$ProviderSettingLoadedCopyWithImpl<ProviderSettingState>(this as ProviderSettingState, _$identity);
+$ProviderSettingStateCopyWith<ProviderSettingState> get copyWith => _$ProviderSettingStateCopyWithImpl<ProviderSettingState>(this as ProviderSettingState, _$identity);
 
 
 
@@ -34,15 +34,15 @@ int get hashCode => Object.hash(runtimeType,provider,const DeepCollectionEqualit
 
 @override
 String toString() {
-  return 'ProviderSettingLoaded(provider: $provider, providers: $providers, isApiKeyValid: $isApiKeyValid, isCheckingApiKey: $isCheckingApiKey)';
+  return 'ProviderSettingState(provider: $provider, providers: $providers, isApiKeyValid: $isApiKeyValid, isCheckingApiKey: $isCheckingApiKey)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $ProviderSettingLoadedCopyWith<$Res>  {
-  factory $ProviderSettingLoadedCopyWith(ProviderSettingState value, $Res Function(ProviderSettingState) _then) = _$ProviderSettingLoadedCopyWithImpl;
+abstract mixin class $ProviderSettingStateCopyWith<$Res>  {
+  factory $ProviderSettingStateCopyWith(ProviderSettingState value, $Res Function(ProviderSettingState) _then) = _$ProviderSettingStateCopyWithImpl;
 @useResult
 $Res call({
  ModelProvider? provider, List<ModelProvider>? providers, bool? isApiKeyValid, bool? isCheckingApiKey
@@ -53,14 +53,14 @@ $ModelProviderCopyWith<$Res>? get provider;
 
 }
 /// @nodoc
-class _$ProviderSettingLoadedCopyWithImpl<$Res>
-    implements $ProviderSettingLoadedCopyWith<$Res> {
-  _$ProviderSettingLoadedCopyWithImpl(this._self, this._then);
+class _$ProviderSettingStateCopyWithImpl<$Res>
+    implements $ProviderSettingStateCopyWith<$Res> {
+  _$ProviderSettingStateCopyWithImpl(this._self, this._then);
 
   final ProviderSettingState _self;
   final $Res Function(ProviderSettingState) _then;
 
-/// Create a copy of ProviderSettingLoaded
+/// Create a copy of ProviderSettingState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? provider = freezed,Object? providers = freezed,Object? isApiKeyValid = freezed,Object? isCheckingApiKey = freezed,}) {
   return _then(_self.copyWith(
@@ -71,7 +71,7 @@ as bool?,isCheckingApiKey: freezed == isCheckingApiKey ? _self.isCheckingApiKey 
 as bool?,
   ));
 }
-/// Create a copy of ProviderSettingLoaded
+/// Create a copy of ProviderSettingState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -88,7 +88,7 @@ $ModelProviderCopyWith<$Res>? get provider {
 
 
 /// Adds pattern-matching-related methods to [ProviderSettingState].
-extension ProviderSettingLoadedPatterns on ProviderSettingState {
+extension ProviderSettingStatePatterns on ProviderSettingState {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -101,10 +101,10 @@ extension ProviderSettingLoadedPatterns on ProviderSettingState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ProviderSettingLoaded value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ProviderSettingState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _ProviderSettingLoaded() when $default != null:
+case _ProviderSettingState() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -123,10 +123,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ProviderSettingLoaded value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ProviderSettingState value)  $default,){
 final _that = this;
 switch (_that) {
-case _ProviderSettingLoaded():
+case _ProviderSettingState():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -144,10 +144,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ProviderSettingLoaded value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ProviderSettingState value)?  $default,){
 final _that = this;
 switch (_that) {
-case _ProviderSettingLoaded() when $default != null:
+case _ProviderSettingState() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -167,7 +167,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ModelProvider? provider,  List<ModelProvider>? providers,  bool? isApiKeyValid,  bool? isCheckingApiKey)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _ProviderSettingLoaded() when $default != null:
+case _ProviderSettingState() when $default != null:
 return $default(_that.provider,_that.providers,_that.isApiKeyValid,_that.isCheckingApiKey);case _:
   return orElse();
 
@@ -188,7 +188,7 @@ return $default(_that.provider,_that.providers,_that.isApiKeyValid,_that.isCheck
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ModelProvider? provider,  List<ModelProvider>? providers,  bool? isApiKeyValid,  bool? isCheckingApiKey)  $default,) {final _that = this;
 switch (_that) {
-case _ProviderSettingLoaded():
+case _ProviderSettingState():
 return $default(_that.provider,_that.providers,_that.isApiKeyValid,_that.isCheckingApiKey);case _:
   throw StateError('Unexpected subclass');
 
@@ -208,7 +208,7 @@ return $default(_that.provider,_that.providers,_that.isApiKeyValid,_that.isCheck
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ModelProvider? provider,  List<ModelProvider>? providers,  bool? isApiKeyValid,  bool? isCheckingApiKey)?  $default,) {final _that = this;
 switch (_that) {
-case _ProviderSettingLoaded() when $default != null:
+case _ProviderSettingState() when $default != null:
 return $default(_that.provider,_that.providers,_that.isApiKeyValid,_that.isCheckingApiKey);case _:
   return null;
 
@@ -220,8 +220,8 @@ return $default(_that.provider,_that.providers,_that.isApiKeyValid,_that.isCheck
 /// @nodoc
 
 
-class _ProviderSettingLoaded implements ProviderSettingState {
-  const _ProviderSettingLoaded({this.provider, final  List<ModelProvider>? providers, this.isApiKeyValid, this.isCheckingApiKey}): _providers = providers;
+class _ProviderSettingState implements ProviderSettingState {
+  const _ProviderSettingState({this.provider, final  List<ModelProvider>? providers, this.isApiKeyValid, this.isCheckingApiKey}): _providers = providers;
   
 
 @override final  ModelProvider? provider;
@@ -237,17 +237,17 @@ class _ProviderSettingLoaded implements ProviderSettingState {
 @override final  bool? isApiKeyValid;
 @override final  bool? isCheckingApiKey;
 
-/// Create a copy of ProviderSettingLoaded
+/// Create a copy of ProviderSettingState
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ProviderSettingLoadedCopyWith<_ProviderSettingLoaded> get copyWith => __$ProviderSettingLoadedCopyWithImpl<_ProviderSettingLoaded>(this, _$identity);
+_$ProviderSettingStateCopyWith<_ProviderSettingState> get copyWith => __$ProviderSettingStateCopyWithImpl<_ProviderSettingState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProviderSettingLoaded&&(identical(other.provider, provider) || other.provider == provider)&&const DeepCollectionEquality().equals(other._providers, _providers)&&(identical(other.isApiKeyValid, isApiKeyValid) || other.isApiKeyValid == isApiKeyValid)&&(identical(other.isCheckingApiKey, isCheckingApiKey) || other.isCheckingApiKey == isCheckingApiKey));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProviderSettingState&&(identical(other.provider, provider) || other.provider == provider)&&const DeepCollectionEquality().equals(other._providers, _providers)&&(identical(other.isApiKeyValid, isApiKeyValid) || other.isApiKeyValid == isApiKeyValid)&&(identical(other.isCheckingApiKey, isCheckingApiKey) || other.isCheckingApiKey == isCheckingApiKey));
 }
 
 
@@ -256,15 +256,15 @@ int get hashCode => Object.hash(runtimeType,provider,const DeepCollectionEqualit
 
 @override
 String toString() {
-  return 'ProviderSettingLoaded(provider: $provider, providers: $providers, isApiKeyValid: $isApiKeyValid, isCheckingApiKey: $isCheckingApiKey)';
+  return 'ProviderSettingState(provider: $provider, providers: $providers, isApiKeyValid: $isApiKeyValid, isCheckingApiKey: $isCheckingApiKey)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ProviderSettingLoadedCopyWith<$Res> implements $ProviderSettingLoadedCopyWith<$Res> {
-  factory _$ProviderSettingLoadedCopyWith(_ProviderSettingLoaded value, $Res Function(_ProviderSettingLoaded) _then) = __$ProviderSettingLoadedCopyWithImpl;
+abstract mixin class _$ProviderSettingStateCopyWith<$Res> implements $ProviderSettingStateCopyWith<$Res> {
+  factory _$ProviderSettingStateCopyWith(_ProviderSettingState value, $Res Function(_ProviderSettingState) _then) = __$ProviderSettingStateCopyWithImpl;
 @override @useResult
 $Res call({
  ModelProvider? provider, List<ModelProvider>? providers, bool? isApiKeyValid, bool? isCheckingApiKey
@@ -275,17 +275,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$ProviderSettingLoadedCopyWithImpl<$Res>
-    implements _$ProviderSettingLoadedCopyWith<$Res> {
-  __$ProviderSettingLoadedCopyWithImpl(this._self, this._then);
+class __$ProviderSettingStateCopyWithImpl<$Res>
+    implements _$ProviderSettingStateCopyWith<$Res> {
+  __$ProviderSettingStateCopyWithImpl(this._self, this._then);
 
-  final _ProviderSettingLoaded _self;
-  final $Res Function(_ProviderSettingLoaded) _then;
+  final _ProviderSettingState _self;
+  final $Res Function(_ProviderSettingState) _then;
 
-/// Create a copy of ProviderSettingLoaded
+/// Create a copy of ProviderSettingState
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? provider = freezed,Object? providers = freezed,Object? isApiKeyValid = freezed,Object? isCheckingApiKey = freezed,}) {
-  return _then(_ProviderSettingLoaded(
+  return _then(_ProviderSettingState(
 provider: freezed == provider ? _self.provider : provider // ignore: cast_nullable_to_non_nullable
 as ModelProvider?,providers: freezed == providers ? _self._providers : providers // ignore: cast_nullable_to_non_nullable
 as List<ModelProvider>?,isApiKeyValid: freezed == isApiKeyValid ? _self.isApiKeyValid : isApiKeyValid // ignore: cast_nullable_to_non_nullable
@@ -294,7 +294,7 @@ as bool?,
   ));
 }
 
-/// Create a copy of ProviderSettingLoaded
+/// Create a copy of ProviderSettingState
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')

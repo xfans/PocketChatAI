@@ -15,6 +15,7 @@ import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'src/models/message.dart';
+import 'src/models/session.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -22,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 7812129364227416687),
     name: 'Message',
-    lastPropertyId: const obx_int.IdUid(4, 2984766812558477459),
+    lastPropertyId: const obx_int.IdUid(9, 687742859575889814),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -32,21 +33,85 @@ final _entities = <obx_int.ModelEntity>[
         flags: 1,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(2, 7996880169085291420),
-        name: 'content',
+        id: const obx_int.IdUid(4, 2984766812558477459),
+        name: 'timestamp',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 556788843347016703),
+        name: 'sessionId',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 654478435734806434),
+        name: 'aiProviderId',
         type: 9,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(3, 6081637526156030876),
-        name: 'isUserMessage',
-        type: 1,
+        id: const obx_int.IdUid(7, 328328535118667240),
+        name: 'contentParts',
+        type: 9,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(4, 2984766812558477459),
-        name: 'timestamp',
-        type: 10,
+        id: const obx_int.IdUid(8, 9078484859737818271),
+        name: 'generating',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 687742859575889814),
+        name: 'role',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(2, 2468584418059563429),
+    name: 'Session',
+    lastPropertyId: const obx_int.IdUid(6, 8506510012443968863),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 5181314408285044517),
+        name: 'id',
+        type: 6,
+        flags: 129,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 6497561769137291810),
+        name: 'name',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 5554307258354404916),
+        name: 'picUrl',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 4123866166167676166),
+        name: 'model',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 2141091013213176862),
+        name: 'temperature',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 8506510012443968863),
+        name: 'maxTokens',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -93,13 +158,13 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(1, 7812129364227416687),
+    lastEntityId: const obx_int.IdUid(2, 2468584418059563429),
     lastIndexId: const obx_int.IdUid(0, 0),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [],
     retiredIndexUids: const [],
-    retiredPropertyUids: const [],
+    retiredPropertyUids: const [7996880169085291420, 6081637526156030876],
     retiredRelationUids: const [],
     modelVersion: 5,
     modelVersionParserMinimum: 5,
@@ -116,12 +181,80 @@ obx_int.ModelDefinition getObjectBoxModel() {
         object.id = id;
       },
       objectToFB: (Message object, fb.Builder fbb) {
-        final contentOffset = fbb.writeString(object.content);
-        fbb.startTable(5);
+        final aiProviderIdOffset = fbb.writeString(object.aiProviderId);
+        final contentPartsOffset = fbb.writeString(object.contentParts);
+        final generatingOffset = fbb.writeString(object.generating);
+        final roleOffset = fbb.writeString(object.role);
+        fbb.startTable(10);
         fbb.addInt64(0, object.id);
-        fbb.addOffset(1, contentOffset);
-        fbb.addBool(2, object.isUserMessage);
         fbb.addInt64(3, object.timestamp.millisecondsSinceEpoch);
+        fbb.addInt64(4, object.sessionId);
+        fbb.addOffset(5, aiProviderIdOffset);
+        fbb.addOffset(6, contentPartsOffset);
+        fbb.addOffset(7, generatingOffset);
+        fbb.addOffset(8, roleOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final roleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 20, '');
+        final sessionIdParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          12,
+          0,
+        );
+        final aiProviderIdParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 14, '');
+        final contentPartsParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 16, '');
+        final generatingParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 18, '');
+        final timestampParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
+        );
+        final object = Message(
+          role: roleParam,
+          sessionId: sessionIdParam,
+          aiProviderId: aiProviderIdParam,
+          contentParts: contentPartsParam,
+          generating: generatingParam,
+          timestamp: timestampParam,
+        )..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+        return object;
+      },
+    ),
+    Session: obx_int.EntityDefinition<Session>(
+      model: _entities[1],
+      toOneRelations: (Session object) => [],
+      toManyRelations: (Session object) => {},
+      getId: (Session object) => object.id,
+      setId: (Session object, int id) {
+        object.id = id;
+      },
+      objectToFB: (Session object, fb.Builder fbb) {
+        final nameOffset = fbb.writeString(object.name);
+        final picUrlOffset = object.picUrl == null
+            ? null
+            : fbb.writeString(object.picUrl!);
+        final modelOffset = object.model == null
+            ? null
+            : fbb.writeString(object.model!);
+        fbb.startTable(7);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, nameOffset);
+        fbb.addOffset(2, picUrlOffset);
+        fbb.addOffset(3, modelOffset);
+        fbb.addFloat64(4, object.temperature);
+        fbb.addInt64(5, object.maxTokens);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -134,23 +267,32 @@ obx_int.ModelDefinition getObjectBoxModel() {
           4,
           0,
         );
-        final contentParam = const fb.StringReader(
+        final nameParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 6, '');
-        final isUserMessageParam = const fb.BoolReader().vTableGet(
+        final picUrlParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 8);
+        final modelParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 10);
+        final temperatureParam = const fb.Float64Reader().vTableGetNullable(
           buffer,
           rootOffset,
-          8,
-          false,
+          12,
         );
-        final timestampParam = DateTime.fromMillisecondsSinceEpoch(
-          const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
+        final maxTokensParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          14,
         );
-        final object = Message(
+        final object = Session(
           id: idParam,
-          content: contentParam,
-          isUserMessage: isUserMessageParam,
-          timestamp: timestampParam,
+          name: nameParam,
+          picUrl: picUrlParam,
+          model: modelParam,
+          temperature: temperatureParam,
+          maxTokens: maxTokensParam,
         );
 
         return object;
@@ -168,18 +310,66 @@ class Message_ {
     _entities[0].properties[0],
   );
 
-  /// See [Message.content].
-  static final content = obx.QueryStringProperty<Message>(
+  /// See [Message.timestamp].
+  static final timestamp = obx.QueryDateProperty<Message>(
     _entities[0].properties[1],
   );
 
-  /// See [Message.isUserMessage].
-  static final isUserMessage = obx.QueryBooleanProperty<Message>(
+  /// See [Message.sessionId].
+  static final sessionId = obx.QueryIntegerProperty<Message>(
     _entities[0].properties[2],
   );
 
-  /// See [Message.timestamp].
-  static final timestamp = obx.QueryDateProperty<Message>(
+  /// See [Message.aiProviderId].
+  static final aiProviderId = obx.QueryStringProperty<Message>(
     _entities[0].properties[3],
+  );
+
+  /// See [Message.contentParts].
+  static final contentParts = obx.QueryStringProperty<Message>(
+    _entities[0].properties[4],
+  );
+
+  /// See [Message.generating].
+  static final generating = obx.QueryStringProperty<Message>(
+    _entities[0].properties[5],
+  );
+
+  /// See [Message.role].
+  static final role = obx.QueryStringProperty<Message>(
+    _entities[0].properties[6],
+  );
+}
+
+/// [Session] entity fields to define ObjectBox queries.
+class Session_ {
+  /// See [Session.id].
+  static final id = obx.QueryIntegerProperty<Session>(
+    _entities[1].properties[0],
+  );
+
+  /// See [Session.name].
+  static final name = obx.QueryStringProperty<Session>(
+    _entities[1].properties[1],
+  );
+
+  /// See [Session.picUrl].
+  static final picUrl = obx.QueryStringProperty<Session>(
+    _entities[1].properties[2],
+  );
+
+  /// See [Session.model].
+  static final model = obx.QueryStringProperty<Session>(
+    _entities[1].properties[3],
+  );
+
+  /// See [Session.temperature].
+  static final temperature = obx.QueryDoubleProperty<Session>(
+    _entities[1].properties[4],
+  );
+
+  /// See [Session.maxTokens].
+  static final maxTokens = obx.QueryIntegerProperty<Session>(
+    _entities[1].properties[5],
   );
 }
