@@ -167,7 +167,7 @@ class _ModelSettingsScreenState extends State<ModelSettingsScreen> {
           );
         }
         _apiHostController.text = state.provider!.apiHost!;
-        _apiKeyController.text = state.provider!.apiKey!;
+        _apiKeyController.text = state.provider?.apiKey ?? '';
         return Scaffold(
           appBar: CustomAppBar(
             title: '${state.provider!.name} Settings',

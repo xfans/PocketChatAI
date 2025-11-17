@@ -30,6 +30,11 @@ class ProviderRepository {
       ..._cache.where((c) => !_defaults.containsKey(c.id)),
     ];
   }
+  // 新增方法：获取默认模型，返回第一个默认模型
+  Future<ModelProvider?> getDefault() async {
+    if (_cache.isEmpty) return null;
+    return _cache.first;
+  }
 
   Future<ModelProvider?> get(String id) async {
     if (!_loaded) await _readFromFile();

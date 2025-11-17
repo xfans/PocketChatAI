@@ -14,11 +14,8 @@ void main() async {
   // Initialize ObjectBox database
   final objectBox = await ObjectBoxService.create();
 
-  // Initialize AI service (you'll need to provide your API key)
-  final aiService = AIService('YOUR_API_KEY_HERE');
-
   // Initialize repository
-  final repository = ChatRepository(objectBox, aiService);
+  final repository = ChatRepository(objectBox);
 
   runApp(MyApp(repository: repository));
 }
@@ -39,9 +36,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: const Scaffold(
-          body: Center(
-            child: Text('Repository not initialized'),
-          ),
+          body: Center(child: Text('Repository not initialized')),
         ),
       );
     }
@@ -53,12 +48,8 @@ class MyApp extends StatelessWidget {
       value: repository!,
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => ChatCubit(repository!),
-          ),
-          BlocProvider(
-            create: (context) => ProviderSettingCubit(),
-          ),
+          BlocProvider(create: (context) => ChatCubit(repository!)),
+          BlocProvider(create: (context) => ProviderSettingCubit()),
         ],
         child: MaterialApp.router(
           title: 'PocketChat AI',
@@ -142,9 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+            const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
