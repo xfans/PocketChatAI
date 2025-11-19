@@ -13,6 +13,7 @@ class ProviderSettingCubit extends Cubit<ProviderSettingState> {
   /* ---------- 业务意图 ---------- */
 
   Future<void> loadList() async {
+    print("loadList");
     try {
       emit(state.copyWith(providers: await _repo.loadAll()));
     } catch (_) {

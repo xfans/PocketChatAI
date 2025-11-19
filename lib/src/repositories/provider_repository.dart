@@ -21,6 +21,7 @@ class ProviderRepository {
   /* ---------- 对外 API ---------- */
 
   Future<List<ModelProvider>> loadAll() async {
+    print("loadAll");
     if (!_loaded) await _readFromFile();
     final settingsMap = {for (final p in _cache) p.id: p};
     return [
