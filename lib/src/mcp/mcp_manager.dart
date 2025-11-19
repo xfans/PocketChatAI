@@ -1,4 +1,5 @@
 import 'package:openai_dart/openai_dart.dart';
+import 'package:pocket_chat/src/mcp/datetime_mcp.dart';
 import 'package:pocket_chat/src/mcp/weather_mcp.dart';
 
 class MCPManager {
@@ -25,5 +26,6 @@ class MCPManager {
 
   void initDefaults() {
     register(WeatherMcp.function.name, WeatherMcp.tool, WeatherMcp.execute);
+    register(DatetimeMcp.function.name, DatetimeMcp.tool, DatetimeMcp.execute);
   }
 }
