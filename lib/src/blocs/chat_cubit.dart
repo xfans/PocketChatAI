@@ -20,14 +20,15 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   /// Send a message
-  Future<void> sendMessage(String message) async {
+  Future<void> sendMessage(String message,{bool isWebSearch = false}) async {
     if (message.trim().isEmpty) return;
 
     try {
       emit(ChatLoading());
       var provider = await _repo.getDefault();
+      print("getDefault:$provider");
       if(provider != null){
-        await _repository.sendMessage(provider,message);
+        await _repository.sendMessage(provider,message,isWebSearch: isWebSearch);
       }
 
     } catch (e) {

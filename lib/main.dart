@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pocket_chat/src/blocs/chat_cubit.dart';
 import 'package:pocket_chat/src/blocs/provider_setting_cubit.dart';
 import 'package:pocket_chat/src/database/objectbox_service.dart';
+import 'package:pocket_chat/src/mcp/mcp_manager.dart';
 import 'package:pocket_chat/src/repositories/chat_repository.dart';
 import 'package:pocket_chat/src/services/ai_service.dart';
 import 'package:pocket_chat/src/routing/app_router.dart';
@@ -13,7 +14,7 @@ void main() async {
 
   // Initialize ObjectBox database
   final objectBox = await ObjectBoxService.create();
-
+  MCPManager.instance.initDefaults();
   // Initialize repository
   final repository = ChatRepository(objectBox);
 

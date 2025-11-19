@@ -34,7 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _sendMessage() {
     if (_textController.text.trim().isNotEmpty) {
-      context.read<ChatCubit>().sendMessage(_textController.text);
+      context.read<ChatCubit>().sendMessage(_textController.text,isWebSearch: true);
       _textController.clear();
 
       // Scroll to bottom after sending a message

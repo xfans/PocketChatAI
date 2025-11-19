@@ -41,7 +41,7 @@ class ProviderSettingCubit extends Cubit<ProviderSettingState> {
     try {
       if(state.provider != null){
         var provider = state.provider!.copyWith(apiKey: key);
-        var res = await OpenAiCompatible(provider).completion('test');
+        var res = await OpenAiCompatible(provider).completion([const ChatCompletionMessage.user(content: ChatCompletionUserMessageContent.string('test'))]);
         print('res:$res');
       }
 
