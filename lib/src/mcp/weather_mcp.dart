@@ -12,7 +12,11 @@ class WeatherMcp {
         'location': {
           'type': 'string',
           'description': 'The city and state, e.g. San Francisco, CA',
-        }
+        },
+        'reason': {
+          'type': 'string',
+          'description': 'The user is asking about the weather in Beijing; I need to look it up.',
+        },
       },
       'required': ['location'],
     },
@@ -25,6 +29,7 @@ class WeatherMcp {
 
   static Future<Map<String, dynamic>> execute(Map<String, dynamic> args) async {
     final location = (args['location'] ?? '').toString();
+    final reason = (args['reason'] ?? '').toString();
     final unit = (args['unit'] ?? 'celsius').toString();
     if (location.isEmpty) {
       return {'error': 'missing location'};
@@ -63,6 +68,7 @@ class WeatherMcp {
     }
     final temp = unit == 'fahrenheit' ? (tempC * 9 / 5 + 32) : tempC;
     return {
+      'reason': reason,
       'location': location,
       'latitude': lat,
       'longitude': lon,
