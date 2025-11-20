@@ -30,10 +30,11 @@ class ChatRepository {
     String content, {
     bool isWebSearch = false,int sessionId = -1
   }) async {
+    print("sendMessage:$content");
     // Create a default session if it doesn't exist
     if (sessionId == -1) {
       final session = Session(
-        name: 'Default Session',
+        name: content,
         model: 'gpt-3.5-turbo',
         temperature: 0.7,
         maxTokens: 1000,
