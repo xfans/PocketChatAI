@@ -12,10 +12,10 @@ class ChatCubit extends Cubit<ChatState> {
   final _repo = ProviderRepository.instance;
   ChatCubit(this._repository) : super(ChatInitial());
 
-  /// Load messages from the database
-  void loadMessages() {
+
+  void loadMessagesBySession(int sessionId) {
     emit(ChatLoading());
-    _repository.getMessages().listen((messages) {
+    _repository.getMessagesBySessionId(sessionId).listen((messages) {
       emit(ChatLoaded(messages));
     });
   }

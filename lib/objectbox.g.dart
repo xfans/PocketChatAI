@@ -75,7 +75,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(2, 2468584418059563429),
     name: 'Session',
-    lastPropertyId: const obx_int.IdUid(6, 8506510012443968863),
+    lastPropertyId: const obx_int.IdUid(8, 6055312068121741129),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -112,6 +112,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(6, 8506510012443968863),
         name: 'maxTokens',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 6055312068121741129),
+        name: 'timestamp',
+        type: 10,
         flags: 0,
       ),
     ],
@@ -164,7 +170,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [],
     retiredIndexUids: const [],
-    retiredPropertyUids: const [7996880169085291420, 6081637526156030876],
+    retiredPropertyUids: const [
+      7996880169085291420,
+      6081637526156030876,
+      2581257007799853028,
+    ],
     retiredRelationUids: const [],
     modelVersion: 5,
     modelVersionParserMinimum: 5,
@@ -248,13 +258,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final modelOffset = object.model == null
             ? null
             : fbb.writeString(object.model!);
-        fbb.startTable(7);
+        fbb.startTable(9);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, nameOffset);
         fbb.addOffset(2, picUrlOffset);
         fbb.addOffset(3, modelOffset);
         fbb.addFloat64(4, object.temperature);
         fbb.addInt64(5, object.maxTokens);
+        fbb.addInt64(7, object.timestamp.millisecondsSinceEpoch);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -286,6 +297,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           14,
         );
+        final timestampParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
+        );
         final object = Session(
           id: idParam,
           name: nameParam,
@@ -293,6 +307,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           model: modelParam,
           temperature: temperatureParam,
           maxTokens: maxTokensParam,
+          timestamp: timestampParam,
         );
 
         return object;
@@ -371,5 +386,10 @@ class Session_ {
   /// See [Session.maxTokens].
   static final maxTokens = obx.QueryIntegerProperty<Session>(
     _entities[1].properties[5],
+  );
+
+  /// See [Session.timestamp].
+  static final timestamp = obx.QueryDateProperty<Session>(
+    _entities[1].properties[6],
   );
 }

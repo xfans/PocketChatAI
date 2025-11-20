@@ -14,9 +14,9 @@ class ChatRepository {
 
   ChatRepository(this._database);
 
-  /// Get all messages as a stream
-  Stream<List<Message>> getMessages() {
-    return _database.getAllMessagesStream();
+
+  Stream<List<Message>> getMessagesBySessionId(int sessionId) {
+    return _database.getMessagesBySessionIdStream(sessionId);
   }
 
   Stream<List<Session>> getSessions() {

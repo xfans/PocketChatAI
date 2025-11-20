@@ -8,6 +8,8 @@ import 'package:pocket_chat/src/ui/widgets/drawer_item.dart';
 import 'package:pocket_chat/src/ui/widgets/chat_history_item.dart';
 import 'package:pocket_chat/src/ui/widgets/app_drawer.dart';
 
+import '../../models/session.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -17,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int? _selectedSessionId;
   @override
   void initState() {
     super.initState();
@@ -38,8 +41,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: const AppDrawer(),
-      body: const ChatScreen(),
+      drawer: AppDrawer(onHistoryClick: (Session s) {
+        setState(() {
+          _selectedSessionId = s.id;
+        });
+        print("_selectedSessionId:$_selectedSessionId");
+        Navigator.of(context).pop();
+      }, onNewChatClick: () {
+        setState(() {
+          _selectedSessionId = null;
+        });
+      },),
+      body: ChatScreen(sessionId: _selectedSessionId),
     );
   }
 }

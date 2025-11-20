@@ -8,7 +8,8 @@ import 'package:pocket_chat/src/ui/widgets/welcome_screen.dart';
 import 'package:pocket_chat/src/ui/widgets/quick_actions.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final int? sessionId;
+  const ChatScreen({super.key, this.sessionId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -22,8 +23,23 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Load messages when the screen is initialized
-    context.read<ChatCubit>().loadMessages();
+    if (widget.sessionId != null) {
+      sessionId = widget.sessionId!;
+      context.read<ChatCubit>().loadMessagesBySession(widget.sessionId!);
+    }
+    print("initState:$sessionId");
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sessionId != widget.sessionId) {
+      if (widget.sessionId != null) {
+        sessionId = widget.sessionId!;
+        context.read<ChatCubit>().loadMessagesBySession(widget.sessionId!);
+      }
+    }
+    print("didUpdateWidget:$sessionId");
   }
 
   @override

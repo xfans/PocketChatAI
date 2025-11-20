@@ -49,7 +49,7 @@
     },
     {
       "id": "2:2468584418059563429",
-      "lastPropertyId": "6:8506510012443968863",
+      "lastPropertyId": "8:6055312068121741129",
       "name": "Session",
       "properties": [
         {
@@ -82,6 +82,11 @@
           "id": "6:8506510012443968863",
           "name": "maxTokens",
           "type": 6
+        },
+        {
+          "id": "8:6055312068121741129",
+          "name": "timestamp",
+          "type": 10
         }
       ],
       "relations": []
@@ -97,7 +102,8 @@
   "retiredIndexUids": [],
   "retiredPropertyUids": [
     7996880169085291420,
-    6081637526156030876
+    6081637526156030876,
+    2581257007799853028
   ],
   "retiredRelationUids": [],
   "version": 1

@@ -12,6 +12,8 @@ class Session {
   String? model;
   double? temperature;
   int? maxTokens;
+  @Property(type: PropertyType.date)
+  DateTime timestamp;
 
   Session({
     this.id = 0,
@@ -20,6 +22,7 @@ class Session {
     this.model,
     this.temperature,
     this.maxTokens,
-  });
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.now();
 }
 

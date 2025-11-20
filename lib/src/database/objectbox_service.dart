@@ -37,10 +37,10 @@ class ObjectBoxService {
     return sessionBox.put(session);
   }
 
-  // Get all messages from the database
-  Stream<List<Message>> getAllMessagesStream() {
+
+  Stream<List<Message>> getMessagesBySessionIdStream(int sessionId) {
     return messageBox
-        .query()
+        .query(Message_.sessionId.equals(sessionId))
         .order(Message_.timestamp)
         .watch(triggerImmediately: true)
         .map((query) => query.find());
@@ -54,7 +54,7 @@ class ObjectBoxService {
   Stream<List<Session>> getAllSessionsStream() {
     return sessionBox
         .query()
-        .order(Session_.id)
+        .order(Session_.timestamp, flags: Order.descending)
         .watch(triggerImmediately: true)
         .map((query) => query.find());
   }

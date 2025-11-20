@@ -5,8 +5,14 @@ import 'package:pocket_chat/src/blocs/chat_cubit.dart';
 import 'package:pocket_chat/src/ui/widgets/drawer_item.dart';
 import 'package:pocket_chat/src/ui/widgets/chat_history_item.dart';
 
+import '../../models/session.dart';
+
+typedef HistoryClickCallback = void Function(Session session);
+typedef NewChatClickCallback = void Function();
 class AppDrawer extends StatefulWidget {
-  const AppDrawer({super.key});
+  final HistoryClickCallback onHistoryClick;
+  final NewChatClickCallback onNewChatClick;
+  const AppDrawer({super.key, required this.onHistoryClick, required this.onNewChatClick});
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();
@@ -69,7 +75,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   icon: Icons.add,
                   title: 'New Chat',
                   onTap: () {
-                    context.read<ChatCubit>().clearMessages();
+                    widget.onNewChatClick();
                   },
                 ),
                 const Divider(),
@@ -98,7 +104,9 @@ class _AppDrawerState extends State<AppDrawer> {
                           return ChatHistoryItem(
                             title: s.name,
                             subtitle: s.model ?? '',
-                            onTap: () {},
+                            onTap: () {
+                              widget.onHistoryClick(s);
+                            },
                             onLongPress: () {},
                           );
                         }).toList(),
