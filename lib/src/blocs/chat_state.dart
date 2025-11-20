@@ -17,3 +17,9 @@ class ChatError extends ChatState {
 
   ChatError(this.message);
 }
+
+class ChatSessionsLoaded extends ChatState {
+  final List<Session> sessions;
+
+  ChatSessionsLoaded(this.sessions);
+}

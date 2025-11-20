@@ -19,26 +19,31 @@ class ChatRepository {
     return _database.getAllMessagesStream();
   }
 
+  Stream<List<Session>> getSessions() {
+    print("getSessions");
+    return _database.getAllSessionsStream();
+  }
+
   /// Send a user message and save both the user message and AI response
   Future<void> sendMessage(
     ModelProvider provider,
     String content, {
-    bool isWebSearch = false,
+    bool isWebSearch = false,int sessionId = -1
   }) async {
     // Create a default session if it doesn't exist
-    final session = Session(
-      id: 1, // Default session ID
-      name: 'Default Session',
-      model: 'gpt-3.5-turbo',
-      temperature: 0.7,
-      maxTokens: 1000,
-    );
-
-    // Save the session
-    await _database.addSession(session);
+    if (sessionId == -1) {
+      final session = Session(
+        name: 'Default Session',
+        model: 'gpt-3.5-turbo',
+        temperature: 0.7,
+        maxTokens: 1000,
+      );
+      sessionId = await _database.addSession(session);
+      print("addSession:$sessionId");
+    }
 
     // Save user message with session ID
-    final userMessage = Message.user(content: content, sessionId: session.id);
+    final userMessage = Message.user(content: content, sessionId: sessionId);
     await _database.addMessage(userMessage);
     List<ChatCompletionMessage> list = [];
     list.add(
@@ -74,7 +79,7 @@ class ChatRepository {
           );
           final toolsMessage = Message.ai(
             content: json.encode(functionResult),
-            sessionId: session.id,
+            sessionId: sessionId,
           );
           await _database.addMessage(toolsMessage);
         }
@@ -87,14 +92,14 @@ class ChatRepository {
       final aiMessage = Message.ai(
         content:
             aiResponse.choices.first.message.content ?? 'No response from AI',
-        sessionId: session.id,
+        sessionId: sessionId,
       );
       await _database.addMessage(aiMessage);
     } catch (e) {
       // Save error message with session ID
       final errorMessage = Message.system(
         content: 'Sorry, I encountered an error: $e',
-        sessionId: session.id,
+        sessionId: sessionId,
       );
       await _database.addMessage(errorMessage);
     }

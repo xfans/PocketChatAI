@@ -73,13 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
           _buildInputArea(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Show quick actions
-          _showQuickActions();
-        },
-        child: const Icon(Icons.auto_awesome),
-      ),
+
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

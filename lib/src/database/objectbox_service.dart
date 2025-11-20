@@ -51,6 +51,14 @@ class ObjectBoxService {
     await messageBox.removeAll();
   }
 
+  Stream<List<Session>> getAllSessionsStream() {
+    return sessionBox
+        .query()
+        .order(Session_.id)
+        .watch(triggerImmediately: true)
+        .map((query) => query.find());
+  }
+
   // Close the database
   void close() {
     store.close();

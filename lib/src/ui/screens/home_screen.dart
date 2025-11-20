@@ -16,18 +16,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<Map<String, String>> _chatHistory = [
-    {
-      'title': 'Travel Planning',
-      'subtitle': 'Suggest places to visit in Japan'
-    },
-    {'title': 'Recipe Ideas', 'subtitle': 'How to make authentic pasta'},
-    {'title': 'Work Project', 'subtitle': 'Help with Flutter app design'},
-    {
-      'title': 'Learning Python',
-      'subtitle': 'Explain object-oriented programming'
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    context.read<ChatCubit>().loadSessions();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,15 +101,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  ..._chatHistory.asMap().entries.map((entry) {
-                    Map<String, String> chat = entry.value;
-                    return ChatHistoryItem(
-                      title: chat['title']!,
-                      subtitle: chat['subtitle']!,
-                      onTap: () {},
-                      onLongPress: () {},
-                    );
-                  }).toList(),
+                  BlocBuilder<ChatCubit, ChatState>(
+                    builder: (context, state) {
+                      if (state is ChatLoading) {
+                        print("ChatLoading");
+                        return const SizedBox.shrink();
+                      }
+                      if (state is ChatSessionsLoaded) {
+                        final sessions = state.sessions;
+                        print("ChatSessionsLoaded:$sessions");
+                        if (sessions.isEmpty) return const SizedBox.shrink();
+                        return Column(
+                          children: sessions.map((s) {
+                            return ChatHistoryItem(
+                              title: s.name,
+                              subtitle: s.model ?? '',
+                              onTap: () {},
+                              onLongPress: () {},
+                            );
+                          }).toList(),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                   const Divider(),
                   DrawerItem(
                     icon: Icons.settings,

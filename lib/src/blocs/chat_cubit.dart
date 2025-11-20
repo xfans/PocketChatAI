@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pocket_chat/src/models/message.dart';
 import 'package:pocket_chat/src/repositories/chat_repository.dart';
+import 'package:pocket_chat/src/models/session.dart';
 
 import '../repositories/provider_repository.dart';
 
@@ -16,6 +17,14 @@ class ChatCubit extends Cubit<ChatState> {
     emit(ChatLoading());
     _repository.getMessages().listen((messages) {
       emit(ChatLoaded(messages));
+    });
+  }
+
+  void loadSessions() {
+    emit(ChatLoading());
+    _repository.getSessions().listen((sessions) {
+      print("loadSessions:${sessions.length}");
+      emit(ChatSessionsLoaded(sessions));
     });
   }
 
