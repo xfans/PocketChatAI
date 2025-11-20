@@ -14,8 +14,11 @@ class ChatRepository {
 
   ChatRepository(this._database);
 
+  Future<List<Message>> getMessagesBySessionIdOnce(int sessionId) {
+    return _database.getMessagesBySessionId(sessionId);
+  }
 
-  Stream<List<Message>> getMessagesBySessionId(int sessionId) {
+  Stream<List<Message>> getMessagesBySessionIdStream(int sessionId) {
     return _database.getMessagesBySessionIdStream(sessionId);
   }
 

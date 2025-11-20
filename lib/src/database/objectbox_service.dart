@@ -37,6 +37,18 @@ class ObjectBoxService {
     return sessionBox.put(session);
   }
 
+  Future<List<Message>> getMessagesBySessionId(int sessionId) async {
+    final query = messageBox
+        .query(Message_.sessionId.equals(sessionId))
+        .order(Message_.timestamp)
+        .build();
+    try {
+      return query.find();
+    } finally {
+      query.close();
+    }
+  }
+
 
   Stream<List<Message>> getMessagesBySessionIdStream(int sessionId) {
     return messageBox
