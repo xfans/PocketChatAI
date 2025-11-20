@@ -24,24 +24,20 @@ class ChatRepository {
     return _database.getAllSessionsStream();
   }
 
+  Future<int> addSession(Session session) {
+    print("addSession:$session");
+    return _database.addSession(session);
+  }
+
   /// Send a user message and save both the user message and AI response
   Future<void> sendMessage(
     ModelProvider provider,
-    String content, {
-    bool isWebSearch = false,int sessionId = -1
+    String content, int sessionId ,{
+    bool isWebSearch = false,
   }) async {
     print("sendMessage:$content");
     // Create a default session if it doesn't exist
-    if (sessionId == -1) {
-      final session = Session(
-        name: content,
-        model: 'gpt-3.5-turbo',
-        temperature: 0.7,
-        maxTokens: 1000,
-      );
-      sessionId = await _database.addSession(session);
-      print("addSession:$sessionId");
-    }
+
 
     // Save user message with session ID
     final userMessage = Message.user(content: content, sessionId: sessionId);

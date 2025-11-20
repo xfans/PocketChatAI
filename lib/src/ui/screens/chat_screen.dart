@@ -17,6 +17,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late int sessionId = -1;
 
   @override
   void initState() {
@@ -32,9 +33,12 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
+  void _sendMessage() async{
     if (_textController.text.trim().isNotEmpty) {
-      context.read<ChatCubit>().sendMessage(_textController.text,isWebSearch: true);
+      if (sessionId == -1) {
+        sessionId = await context.read<ChatCubit>().newSession(_textController.text);
+      }
+      context.read<ChatCubit>().sendMessage(_textController.text,sessionId,isWebSearch: true);
       _textController.clear();
 
       // Scroll to bottom after sending a message

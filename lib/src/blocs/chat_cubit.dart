@@ -28,8 +28,20 @@ class ChatCubit extends Cubit<ChatState> {
     });
   }
 
+  Future<int> newSession(String content) {
+      final session = Session(
+        name: content,
+        model: 'gpt-3.5-turbo',
+        temperature: 0.7,
+        maxTokens: 1000,
+      );
+
+      print("newSession");
+    return _repository.addSession(session);
+  }
+
   /// Send a message
-  Future<void> sendMessage(String message,{bool isWebSearch = false}) async {
+  Future<void> sendMessage(String message,int sessionId,{bool isWebSearch = false}) async {
     if (message.trim().isEmpty) return;
 
     try {
@@ -37,7 +49,7 @@ class ChatCubit extends Cubit<ChatState> {
       var provider = await _repo.getDefault();
       print("getDefault:$provider");
       if(provider != null){
-        await _repository.sendMessage(provider,message,isWebSearch: isWebSearch);
+        await _repository.sendMessage(provider,message,sessionId,isWebSearch: isWebSearch);
       }
 
     } catch (e) {
