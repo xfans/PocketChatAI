@@ -30,7 +30,8 @@ class ChatRepository {
     return id;
   }
 
-  Future<int> modifyMessage(int sessionId,int messageId,String message) async {
+  Future<int> modifyMessage(int sessionId,int messageId,String message,
+      {bool saveDb = false}) async {
     print("modifyMessage:$message");
 
     var list = _messagesMap[sessionId] ??= [];
@@ -40,7 +41,9 @@ class ChatRepository {
     msg.id = messageId;
     var content = msg.contentParts;
     msg.contentParts = content + message;
-    _database.modifyMessage(msg);
+    if (saveDb) {
+      _database.modifyMessage(msg);
+    }
     return messageId;
   }
 
@@ -104,7 +107,7 @@ class ChatRepository {
               content: json.encode(functionResult),
             ),
           );
-          modifyMessage(sessionId,messageId,json.encode(functionResult));
+          modifyMessage(sessionId,messageId,json.encode(functionResult),saveDb: true);
         }
 
         aiResponse = await OpenAiCompatible(
@@ -112,7 +115,7 @@ class ChatRepository {
         ).completion(list, tools: mcpTools);
         print("aiResponse2:${aiResponse.choices.first.message.content}");
       }
-      modifyMessage(sessionId,messageId,aiResponse.choices.first.message.content ?? 'No response from AI');
+      modifyMessage(sessionId,messageId,aiResponse.choices.first.message.content ?? 'No response from AI',saveDb: true);
     } catch (e) {
       modifyMessage(sessionId, messageId, 'Sorry, I encountered an error: $e');
     }
