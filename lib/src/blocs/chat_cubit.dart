@@ -45,7 +45,7 @@ class ChatCubit extends Cubit<ChatState> {
     if (message.trim().isEmpty) return;
 
     try {
-      emit(ChatLoading());
+      // emit(ChatLoading());
       var provider = await _repo.getDefault();
       print("getDefault:$provider");
       if(provider != null){
@@ -55,6 +55,7 @@ class ChatCubit extends Cubit<ChatState> {
     } catch (e) {
       emit(ChatError('Failed to send message: $e'));
     }
+    loadMessagesBySession(sessionId);
   }
 
   /// Clear all messages
