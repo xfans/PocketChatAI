@@ -50,14 +50,6 @@ class ObjectBoxService {
   }
 
 
-  Stream<List<Message>> getMessagesBySessionIdStream(int sessionId) {
-    return messageBox
-        .query(Message_.sessionId.equals(sessionId))
-        .order(Message_.timestamp)
-        .watch(triggerImmediately: true)
-        .map((query) => query.find());
-  }
-
   // Delete all messages
   Future<void> clearAllMessages() async {
     await messageBox.removeAll();
@@ -74,5 +66,9 @@ class ObjectBoxService {
   // Close the database
   void close() {
     store.close();
+  }
+
+  void modifyMessage(Message msg) {
+    messageBox.put(msg);
   }
 }

@@ -15,8 +15,8 @@ class ChatCubit extends Cubit<ChatState> {
 
   void loadMessagesBySession(int sessionId) {
     emit(ChatLoading());
-    _repository.getMessagesBySessionIdStream(sessionId).listen((messages) {
-      emit(ChatLoaded(messages));
+    _repository.getMessagesBySessionIdOnce(sessionId).then((onValue){
+      emit(ChatLoaded(onValue));
     });
   }
 

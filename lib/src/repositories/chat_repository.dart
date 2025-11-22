@@ -11,15 +11,37 @@ import 'package:pocket_chat/src/mcp/web_search.dart';
 
 class ChatRepository {
   final ObjectBoxService _database;
+  final Map<int,List<Message>> _messagesMap = {};
 
   ChatRepository(this._database);
 
-  Future<List<Message>> getMessagesBySessionIdOnce(int sessionId) {
-    return _database.getMessagesBySessionId(sessionId);
+  Future<List<Message>> getMessagesBySessionIdOnce(int sessionId) async {
+    var messages = await _database.getMessagesBySessionId(sessionId);
+    _messagesMap[sessionId] = messages;
+    return messages;
   }
 
-  Stream<List<Message>> getMessagesBySessionIdStream(int sessionId) {
-    return _database.getMessagesBySessionIdStream(sessionId);
+  Future<int> addMessage(int sessionId,Message message) async {
+    print("addMessage:$message");
+    var id = await _database.addMessage(message);
+    message.id = id;
+    var list = _messagesMap[sessionId] ??= [];
+    list.add(message);
+    return id;
+  }
+
+  Future<int> modifyMessage(int sessionId,int messageId,String message) async {
+    print("modifyMessage:$message");
+
+    var list = _messagesMap[sessionId] ??= [];
+    var msg = list.firstWhere((element){
+      return element.id == messageId;
+    });
+    msg.id = messageId;
+    var content = msg.contentParts;
+    msg.contentParts = content + message;
+    _database.modifyMessage(msg);
+    return messageId;
   }
 
   Stream<List<Session>> getSessions() {
@@ -44,7 +66,12 @@ class ChatRepository {
 
     // Save user message with session ID
     final userMessage = Message.user(content: content, sessionId: sessionId);
-    await _database.addMessage(userMessage);
+    addMessage(sessionId,userMessage);
+    final assistantMessage = Message.ai(
+      content: "",
+      sessionId: sessionId,
+    );
+    var messageId = await addMessage(sessionId,assistantMessage);
     List<ChatCompletionMessage> list = [];
     list.add(
       ChatCompletionMessage.user(
@@ -77,11 +104,7 @@ class ChatRepository {
               content: json.encode(functionResult),
             ),
           );
-          final toolsMessage = Message.ai(
-            content: json.encode(functionResult),
-            sessionId: sessionId,
-          );
-          await _database.addMessage(toolsMessage);
+          modifyMessage(sessionId,messageId,json.encode(functionResult));
         }
 
         aiResponse = await OpenAiCompatible(
@@ -89,19 +112,9 @@ class ChatRepository {
         ).completion(list, tools: mcpTools);
         print("aiResponse2:${aiResponse.choices.first.message.content}");
       }
-      final aiMessage = Message.ai(
-        content:
-            aiResponse.choices.first.message.content ?? 'No response from AI',
-        sessionId: sessionId,
-      );
-      await _database.addMessage(aiMessage);
+      modifyMessage(sessionId,messageId,aiResponse.choices.first.message.content ?? 'No response from AI');
     } catch (e) {
-      // Save error message with session ID
-      final errorMessage = Message.system(
-        content: 'Sorry, I encountered an error: $e',
-        sessionId: sessionId,
-      );
-      await _database.addMessage(errorMessage);
+      modifyMessage(sessionId, messageId, 'Sorry, I encountered an error: $e');
     }
   }
 
