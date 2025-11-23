@@ -9,12 +9,13 @@ class OpenAiCompatible {
     client = OpenAIClient(apiKey: modelProvider.apiKey,baseUrl: modelProvider.apiHost);
   }
 
-  Future<CreateChatCompletionResponse> completion(List<ChatCompletionMessage> messages ,{List<ChatCompletionTool>? tools}) async{
-    final res = await client.createChatCompletion(
+  Stream<CreateChatCompletionStreamResponse> completion(List<ChatCompletionMessage> messages ,{List<ChatCompletionTool>? tools}){
+    final res =  client.createChatCompletionStream(
       request: CreateChatCompletionRequest(
         model: ChatCompletionModel.modelId(modelProvider.models[0].modelId),
         messages: messages,
         tools: tools,
+        stream: true,
       ),
     );
     return res;

@@ -56,8 +56,7 @@ class ChatRepository {
       return element.id == messageId;
     });
     msg.id = messageId;
-    var content = msg.contentParts;
-    msg.contentParts = content + message;
+    msg.contentParts = message;
     if (saveDb) {
       _database.modifyMessage(msg);
     }
@@ -83,9 +82,7 @@ class ChatRepository {
     bool isWebSearch = false,
   }) async {
     print("sendMessage:$content");
-    // Create a default session if it doesn't exist
 
-    // Save user message with session ID
     final userMessage = Message.user(content: content, sessionId: sessionId);
     addMessage(sessionId, userMessage);
     final assistantMessage = Message.ai(content: "", sessionId: sessionId);
@@ -103,10 +100,62 @@ class ChatRepository {
       var aiResponse = await OpenAiCompatible(
         provider,
       ).completion(list, tools: mcpTools);
-      print("aiResponse:${aiResponse.choices.first.message.content}");
-      print("aiResponse:${aiResponse.choices.first.message.toolCalls}");
-      var toolCalls = aiResponse.choices.first.message.toolCalls;
-      if (toolCalls != null && toolCalls.isNotEmpty) {
+
+      // Collect streaming response and tool calls
+      String assistantContent = '';
+      final toolCallsMap = <int, Map<String, dynamic>>{};
+
+      await for (final chunk in aiResponse) {
+        final delta = chunk.choices?.first.delta;
+
+        // Handle content
+        final content = delta?.content;
+        if (content != null && content.isNotEmpty) {
+          print(assistantContent);
+          assistantContent += content;
+          modifyMessage(sessionId, messageId, assistantContent, saveDb: false);
+        }
+
+        // Handle tool calls
+        final toolCalls = delta?.toolCalls;
+        if (toolCalls != null) {
+          for (final toolCall in toolCalls) {
+            final index = toolCall.index ?? -1;
+            if (index != -1) {
+              final id = toolCall.id ?? '';
+                toolCallsMap[index] ??= {
+                  'id': id,
+                  'type': 'function',
+                  'function': {'name': '', 'arguments': ''},
+                };
+              if (toolCall.function?.name != null) {
+                toolCallsMap[index]!['function']['name'] = toolCall.function!.name;
+              }
+              if (toolCall.function?.arguments != null) {
+                toolCallsMap[index]!['function']['arguments'] +=
+                    toolCall.function!.arguments;
+              }
+            }
+          }
+        }
+      }
+      // print("aiResponse:${aiResponse.choices.first.message.content}");
+      // print("aiResponse:${aiResponse.choices.first.message.toolCalls}");
+      // var toolCalls = aiResponse.choices.first.message.toolCalls;
+      if (toolCallsMap.isNotEmpty) {
+        final toolCalls = toolCallsMap.values
+            .map(
+              (toolCallData) => ChatCompletionMessageToolCall(
+                id: toolCallData['id'],
+                type: ChatCompletionMessageToolCallType.function,
+                function: ChatCompletionMessageFunctionCall(
+                  name: toolCallData['function']['name'],
+                  arguments: toolCallData['function']['arguments'],
+                ),
+              ),
+            )
+            .toList();
+
         for (var toolCall in toolCalls) {
           final functionCall = toolCall.function;
           final arguments =
@@ -115,6 +164,7 @@ class ChatRepository {
             functionCall.name,
             arguments,
           );
+          print("-----tool Call 3-----:${json.encode(functionResult)}");
           print("toolCallResponse:${json.encode(functionResult)}");
           list.add(
             ChatCompletionMessage.tool(
@@ -122,28 +172,38 @@ class ChatRepository {
               content: json.encode(functionResult),
             ),
           );
+          assistantContent += json.encode(functionResult);
           modifyMessage(
             sessionId,
             messageId,
-            json.encode(functionResult),
+            assistantContent,
             saveDb: true,
           );
         }
 
-        aiResponse = await OpenAiCompatible(
+        var aiResponse = OpenAiCompatible(
           provider,
         ).completion(list, tools: mcpTools);
-        print("aiResponse2:${aiResponse.choices.first.message.content}");
+
+        await for (final chunk in aiResponse) {
+          final delta = chunk.choices?.first.delta;
+
+          // Handle content
+          final content = delta?.content;
+          if (content != null) {
+            assistantContent += content;
+            modifyMessage(sessionId, messageId, assistantContent, saveDb: false);
+          }
+        }
       }
       modifyMessage(
         sessionId,
         messageId,
-        aiResponse.choices.first.message.content ?? 'No response from AI',
+        assistantContent ?? 'No response from AI',
         saveDb: true,
       );
     } catch (e) {
       modifyMessage(sessionId, messageId, 'Sorry, I encountered an error: $e');
     }
   }
-
 }
