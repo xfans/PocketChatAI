@@ -68,6 +68,7 @@ class WeatherMcp {
     }
     final temp = unit == 'fahrenheit' ? (tempC * 9 / 5 + 32) : tempC;
     return {
+      'name': 'get_current_weather',
       'reason': reason,
       'location': location,
       'latitude': lat,
