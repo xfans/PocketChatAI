@@ -15,7 +15,8 @@ class ChatCubit extends Cubit<ChatState> {
 
   void loadMessagesBySession(int sessionId) {
     emit(ChatLoading());
-    _repository.getMessagesBySessionIdOnce(sessionId).then((onValue){
+    _repository.getMessagesBySessionIdOnce(sessionId).listen((onValue){
+      print(onValue);
       emit(ChatLoaded(onValue));
     });
   }
@@ -58,13 +59,4 @@ class ChatCubit extends Cubit<ChatState> {
     loadMessagesBySession(sessionId);
   }
 
-  /// Clear all messages
-  Future<void> clearMessages() async {
-    try {
-      await _repository.clearMessages();
-      emit(ChatLoaded([]));
-    } catch (e) {
-      emit(ChatError('Failed to clear messages: $e'));
-    }
-  }
 }

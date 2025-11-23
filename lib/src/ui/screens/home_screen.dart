@@ -37,7 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.clear),
-            onPressed: () => context.read<ChatCubit>().clearMessages(),
+            onPressed: (){
+
+            },
           ),
         ],
       ),

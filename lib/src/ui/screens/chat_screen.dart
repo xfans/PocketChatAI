@@ -101,8 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildWelcomeScreen() {
     return WelcomeScreen(
       onNewChat: () {
-        // Clear any existing messages to start a new chat
-        context.read<ChatCubit>().clearMessages();
+
       },
     );
   }
